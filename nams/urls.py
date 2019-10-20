@@ -13,9 +13,21 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
+# media
+from django.conf import settings
+from django.views.static import serve
+from django.views.generic import RedirectView
+# django-rest-framework
+from rest_framework import routers
+
+router = routers.DefaultRouter()
+# router.registry.extend(asset_router.registry)
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^nam/', include('web.urls', namespace='web')),
+    # url(r'^api/', include(router.urls, namespace='api')),
+    url(r'^document/(?P<path>.*)', serve, {'document_root': settings.MEDIA_ROOT}),
 ]
