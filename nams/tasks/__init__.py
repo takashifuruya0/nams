@@ -1,6 +1,6 @@
 # fmanage/tasks/__init__.py
 from ..celery import app
-# celery -A fmanage worker -c 2 -l info
+# celery -A nams worker -c 2 -l info
 
 
 @app.task()
