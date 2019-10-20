@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ja">
+  <head>
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- favicon -->
+<!--    <link rel="shortcut icon" type="image/x-icon" href="/document/dogP5.gif">-->
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="/document/bootstrap/css/bootstrap.min.css" >
+    <!-- Original CSS -->
+    <link rel="stylesheet" href="/document/css/common.css">
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.12/css/all.css" integrity="sha384-G0fIWCsCzJIMAVNQPfjH08cyYaUtMwjJwqiRKxxE/rx96Uroj1BtIQ6MLJuheaO9" crossorigin="anonymous">
+    <!--chart.js-->
+<!--    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.bundle.min.js"></script>-->
+    <!--datepicker-->
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <script src="https://code.jquery.com/jquery-1.12.4.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+    <script>
+      $( function() {
+        let dateFormat = 'yy-mm-dd';
+        $("#id_date" ).datepicker(
+          {
+            dateFormat: dateFormat,
+          }
+        );
+      } );
+    </script>
+  </head>
+  <body>
+    {% if messages %}
+    {% for msg in messages %}
+    <div class="alert alert-{{ msg.tags }} alert-dismissible">
+      <button type="button" class="close" data-dismiss="alert">&times;</button>
+      <strong>{{ msg.tags }}</strong> {{msg}}
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% block body %}{% endblock %}
+
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+    <script src="/document/bootstrap/js/bootstrap.min.js"></script>
+    {% block script %}{% endblock %}
+  </body>
+</html>

@@ -31,7 +31,7 @@ SECRET_KEY = 'i9wh80qxvte3^)9z&&tq7$m^rgrcw=fyv6s@%d3$1ox&(q&wac'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -186,6 +186,11 @@ PAGINATION_SETTINGS = {
     'SHOW_FIRST_PAGE_WHEN_INVALID': True,
 }
 
+# auth
+LOGIN_URL = '/login'
+LOGIN_REDIRECT_URL = '/nam'
+LOGOUT_REDIRECT_URL = '/login'
+
 
 # messages framework
 from django.contrib.messages import constants as messages
@@ -197,6 +202,14 @@ MESSAGE_TAGS = {
     messages.ERROR: 'danger',
 }
 MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+
+# test
+TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
+NOSE_ARGS = [
+    '--with-coverage',  # get coverage
+    '--cover-html',  # output coverage to cover/ in html
+    '--cover-package=kakeibo,asset,api',  # targets are kakeibo, api, asset
+]
 
 # django-rest-framework
 REST_FRAMEWORK = {
