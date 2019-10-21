@@ -12,8 +12,12 @@ logger = logging.getLogger("django")
 # Create your views here.
 @login_required
 def main(request):
+    msg = "Hello Django Test"
+    logger.info(msg)
+    messages.info(request, msg)
     output = {
-        "msg": "Hello Django"
+        "msg": msg,
+        "user": request.user,
     }
     return TemplateResponse(request, "web/main.html", output)
 
@@ -24,6 +28,7 @@ def test(request):
     logger.info(msg)
     messages.info(request, msg)
     output = {
-        "msg": msg
+        "msg": msg,
+        "user": request.user,
     }
     return TemplateResponse(request, "web/main.html", output)
