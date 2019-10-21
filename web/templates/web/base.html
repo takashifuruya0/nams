@@ -39,7 +39,27 @@
     </div>
     {% endfor %}
     {% endif %}
-
+    <hr>
+    <div class="container-fluid">
+      <div class="row">
+        <div class="col-4">
+          <a href="/admin" class="btn btn-block btn-secondary">
+            <i class="fas fa-cog"></i> Admin
+          </a>
+        </div>
+        <div class="col-4">
+          <a href="{%url 'web:test'%}" class="btn btn-block btn-info">
+            <i class="fas fa-home"></i> Test
+          </a>
+        </div>
+        <div class="col-4">
+          <a href="{%url 'logout_nams'%}" class="btn btn-block btn-primary">
+            <i class="fas fa-sign-out-alt"></i> Log out
+          </a>
+        </div>
+      </div>
+    </div>
+    <hr>
     {% block body %}{% endblock %}
 
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

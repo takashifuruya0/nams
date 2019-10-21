@@ -34,6 +34,6 @@ urlpatterns = [
     # url(r'^api/', include(router.urls, namespace='api')),
     url(r'^document/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # login/logout
-    url(r'^login$', auth_views.LoginView.as_view(template_name="web/login.html"), name="login"),
-    url(r'^logout$', auth_views.LogoutView, name='logout'),
+    url(r'^login$', auth_views.LoginView.as_view(template_name="web/login.html"), name="login_nams"),
+    url(r'^logout$', auth_views.LogoutView.as_view(), name='logout_nams'),
 ]
