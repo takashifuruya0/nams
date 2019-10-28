@@ -80,7 +80,6 @@ class Entry(models.Model):
         return profit
 
 
-
 class Order(models.Model):
     objects = None
     user = models.ForeignKey(User, on_delete=models.CASCADE)
