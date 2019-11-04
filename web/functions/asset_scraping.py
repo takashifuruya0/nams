@@ -14,6 +14,7 @@ data形式
 }
 '''
 
+
 def kabuoji3(code):
     base_url = "https://kabuoji3.com/stock/" + str(code) + "/"
     headers = {
