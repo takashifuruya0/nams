@@ -37,7 +37,7 @@ def record_stock_value_data(code):
                     val_close=d[4],
                     turnover=d[5],
                 )
-    logger.info('StockValueData of {} are updated'.format(stock))
+        logger.info('StockValueData of {} are updated'.format(stock))
     return True
 
 
