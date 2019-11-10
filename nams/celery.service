@@ -1,0 +1,12 @@
+[Unit]
+Description=celery daemon
+After=network.target
+
+[Service]
+User=pi
+Group=pi
+WorkingDirectory=/home/pi/nams
+ExecStart=/home/pi/nams/venv/bin/celery -A nams worker --concurrency=1
+
+[Install]
+WantedBy=multi-user.target

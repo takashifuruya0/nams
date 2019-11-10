@@ -30,6 +30,7 @@ def kabuoji3(code):
         for r in records:
             tmp = list()
             for i in range(7):
+                # date, open, high, low, close, turnover, ?
                 tmp.append(r.select('td:nth-of-type({0})'.format(i+1))[0].text)
             data.append(tmp)
         msg = "Done"
