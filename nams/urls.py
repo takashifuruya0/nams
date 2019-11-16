@@ -20,18 +20,18 @@ from django.conf import settings
 from django.views.static import serve
 from django.views.generic import RedirectView
 # django-rest-framework
-from rest_framework import routers
+from api.urls import router
 # auth
 from django.contrib.auth import views as auth_views
 
-router = routers.DefaultRouter()
-# router.registry.extend(asset_router.registry)
+
 
 urlpatterns = [
     url(r'^$', RedirectView.as_view(url='nam/')),
     url(r'^admin/', admin.site.urls),
     url(r'^nam/', include('web.urls', namespace='web')),
-    # url(r'^api/', include(router.urls, namespace='api')),
+    url(r'^api/', include(router.urls)),
+    # url(r'^drm/', include(router.urls, namespace='drm')),
     url(r'^document/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # login/logout
     url(r'^login$', auth_views.LoginView.as_view(template_name="web/login.html"), name="login_nams"),
