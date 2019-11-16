@@ -2,6 +2,7 @@
 from rest_framework import serializers
 from web.models import Stock, Order, Entry, StockValueData, StockFinancialData
 from web.models import ReasonWinLoss, AssetStatus
+from django.contrib.auth.models import User
 
 
 class StockSerializer(serializers.ModelSerializer):
@@ -11,7 +12,7 @@ class StockSerializer(serializers.ModelSerializer):
 
 
 class EntrySerializer(serializers.ModelSerializer):
-    stock = StockSerializer()
+    # stock = StockSerializer(read_only=True)
 
     class Meta:
         model = Entry
@@ -19,8 +20,8 @@ class EntrySerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-    stock = StockSerializer()
-    entry = EntrySerializer()
+    # stock = StockSerializer(read_only=True)
+    # entry = EntrySerializer(read_only=True)
 
     class Meta:
         model = Order
@@ -28,7 +29,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class StockValueDataSerializer(serializers.ModelSerializer):
-    stock = StockSerializer
+    # stock = StockSerializer
 
     class Meta:
         model = StockValueData
@@ -36,7 +37,7 @@ class StockValueDataSerializer(serializers.ModelSerializer):
 
 
 class StockFinancialDataSerializer(serializers.ModelSerializer):
-    stock = StockSerializer
+    # stock = StockSerializer
 
     class Meta:
         model = StockFinancialData
@@ -53,4 +54,13 @@ class ReasonWinLossSerializer(serializers.ModelSerializer):
     class Meta:
         model = ReasonWinLoss
         fields = '__all__'
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = '__all__'
+
+
+
 
