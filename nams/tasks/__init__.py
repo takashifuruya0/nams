@@ -1,6 +1,7 @@
 # nams/tasks/__init__.py
+from datetime import date
 from ..celery import app
-from web.models import Stock, StockValueData
+from web.models import Stock, StockValueData, AssetStatus, StockFinancialData
 from web.functions import asset_scraping
 import logging
 logger = logging.getLogger('django')
@@ -21,14 +22,23 @@ def add_numbers(a, b):
 
 @app.task()
 def record_stock_value_data(code):
-    # stocks = Stock.objects.filter(is_trust=False)
-    # for s in stocks:
+    '''
+    record_stock_value_data
+    :desc: kabuoji3からHLOCTを取得し、StockValueDataに格納
+    :param code: 銘柄コード
+    :return: StockValueDataの追加数等
+    '''
+    # for result
+    counter = 0
+    list_added = list()
+    # main process
     data = asset_scraping.kabuoji3(code)
     if data['status']:
         stock = Stock.objects.get(code=code)
         for d in data['data']:
             if StockValueData.objects.filter(stock=stock, date=d[0]).__len__() == 0:
-                StockValueData.objects.create(
+                counter += 1
+                s = StockValueData.objects.create(
                     stock=stock,
                     date=d[0],
                     val_open=d[1],
@@ -37,9 +47,47 @@ def record_stock_value_data(code):
                     val_close=d[4],
                     turnover=d[5],
                 )
+                list_added(s)
         logger.info('StockValueData of {} are updated'.format(stock))
+    result = {
+        "counter": counter,
+        "stock": {
+            "name": stock.name,
+            "code": stock.code,
+        },
+        "list": list_added,
+    }
+    return result
+
+
+@app.task()
+def record_asset_status():
+    '''
+    record_asset_status
+    :desc: 最終日のレコードを取得して、日付を今日に変更して作成
+    :param: Null
+    :return: True
+    '''
+    asset_status = AssetStatus.objects.latest('date')
+    asset_status.pk = None
+    asset_status.date = date.today()
+    asset_status.save()
     return True
 
 
-
-
+@app.task()
+def record_stock_financial_data(code):
+    '''
+    record_stock_financial_data
+    :desc: yahoo finance からデータ取得し、StockFinancialDataに格納
+    :param code: 銘柄コード
+    :return: 追加結果等
+    '''
+    data = asset_scraping.yf_profile(code, is_consolidated=True)
+    if data['status']:
+        stock = Stock.objects.get(code=code)
+        for d in data['data']:
+            if StockFinancialData.objects.filter(stock=stock, date=d['決算発表日']).__len__() == 0:
+                sfd = StockFinancialData()
+    result = {}
+    return result

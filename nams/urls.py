@@ -27,11 +27,10 @@ from django.contrib.auth import views as auth_views
 
 
 urlpatterns = [
-    url(r'^$', RedirectView.as_view(url='nam/')),
+    url(r'^$', RedirectView.as_view(url='nams/')),
     url(r'^admin/', admin.site.urls),
-    url(r'^nam/', include('web.urls', namespace='web')),
+    url(r'^nams/', include('web.urls', namespace='web')),
     url(r'^api/', include(router.urls)),
-    # url(r'^drm/', include(router.urls, namespace='drm')),
     url(r'^document/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # login/logout
     url(r'^login$', auth_views.LoginView.as_view(template_name="web/login.html"), name="login_nams"),

@@ -55,7 +55,6 @@ def yf_profile(code, is_consolidated=True):
         # 単体
         url = "https://profile.yahoo.co.jp/independent/{}".format(code)
     ret = requests.get(url)
-    data = dict()
     res = list()
     # table取得
     try:
@@ -79,6 +78,7 @@ def yf_profile(code, is_consolidated=True):
 
     # tableから
     for i in range(3):
+        data = dict()
         data['最終更新日'] = last_update
         for tr in trs:
             try:

@@ -42,19 +42,24 @@
     <hr>
     <div class="container-fluid">
       <div class="row">
-        <div class="col-4">
+        <div class="col-3">
           <a href="/admin" class="btn btn-block btn-secondary">
             <i class="fas fa-cog"></i> Admin
           </a>
         </div>
-        <div class="col-4">
+        <div class="col-3">
+          <a href="/api" class="btn btn-block btn-warning">
+            <i class="fas fa-database"></i> API
+          </a>
+        </div>
+        <div class="col-3">
           <a href="{%url 'web:test'%}" class="btn btn-block btn-info">
             <i class="fas fa-home"></i> Test
           </a>
         </div>
-        <div class="col-4">
+        <div class="col-3">
           <a href="{%url 'logout_nams'%}" class="btn btn-block btn-primary">
-            <i class="fas fa-sign-out-alt"></i> Log out
+            <i class="fas fa-sign-out-alt"></i> Log Out
           </a>
         </div>
       </div>

@@ -38,6 +38,7 @@ class Main(TemplateView):
         messages.info(request, msg)
         return redirect('web:main')
 
+
 @login_required
 def test(request):
     msg = "Hello Django Test"

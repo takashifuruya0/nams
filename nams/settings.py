@@ -188,7 +188,7 @@ PAGINATION_SETTINGS = {
 
 # auth
 LOGIN_URL = '/login'
-LOGIN_REDIRECT_URL = '/nam'
+LOGIN_REDIRECT_URL = '/nams'
 LOGOUT_REDIRECT_URL = '/login'
 
 
