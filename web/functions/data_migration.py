@@ -36,6 +36,7 @@ def order():
             d.pop('price')
             d.pop('order_type')
             d.pop('chart')
+            print(d)
             o = Order.objects.create(**d)
             # entry
             if not o.stock.is_trust and o.is_buy:
