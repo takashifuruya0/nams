@@ -13,7 +13,6 @@ import logging
 logger = logging.getLogger("django")
 
 
-
 # Create your views here.
 @login_required
 def main(request):
@@ -58,8 +57,6 @@ def entry_list(request):
                             entry.order_set.all().update(entry=first_entry)
                         if entry.remaining() == 0:
                             entry.delete()
-                        else:
-                            entry.save()
                     msg = "Entrys {} are merged to Entry {}".format(pks, first_entry.pk)
                     messages.success(request, msg)
         except Exception as e:
@@ -99,13 +96,11 @@ def entry_detail(request, entry_id):
                 # link_orders
                 if request.POST['post_type'] == "link_orders":
                     orders.update(entry=entry_id)
-                    entry.save()
                     msg = "Orders {} are linked to Entry {}".format(pks, entry_id)
                     messages.success(request, msg)
                 # unlink_orders
                 elif request.POST['post_type'] == "unlink_orders":
                     orders.update(entry=None)
-                    entry.save()
                     msg = "Orders {} are unlinked from Entry {}".format(pks, entry_id)
                     messages.success(request, msg)
         except Exception as e:
