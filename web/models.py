@@ -91,10 +91,22 @@ class Entry(models.Model):
 
     def update(self, *args, **kwargs):
         self.is_closed = True if self.remaining() == 0 else False
+        if not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
+            raise Exception('Different stocks are linked')
+        if self.remaining() < 0:
+            raise Exception('remaining should be over 0')
+        if self.is_closed and self.date_open() > self.date_close():
+            raise Exception('date_open should be earlier than date_close')
         super().update(*args, **kwargs)
 
     def save(self, *args, **kwargs):
         self.is_closed = True if self.remaining() == 0 else False
+        if not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
+            raise Exception('Different stocks are linked')
+        if self.remaining() < 0:
+            raise Exception('remaining should be over 0')
+        if self.is_closed and self.date_open() > self.date_close():
+            raise Exception('date_open should be earlier than date_close')
         super().save(*args, **kwargs)
 
 

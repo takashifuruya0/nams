@@ -1,5 +1,5 @@
 {% extends "web/base.html" %}
-
+{% load humanize %}
 {% block title %}
     Entry View
 {% endblock %}
@@ -36,11 +36,11 @@
 				</tr>
 				<tr>
 					<th>Remaining</th>
-					<td>{{entry.remaining}}</td>
+					<td>{{entry.remaining | intcomma}}</td>
 				</tr>
 				<tr>
 					<th>Profit</th>
-					<td>¥{{entry.profit}}</td>
+					<td>¥{{entry.profit | intcomma}}</td>
 				</tr>
 				<tr>
 					<th>Reason</th>
@@ -51,33 +51,44 @@
 					<td>{{entry.memo}}</td>
 				</tr>
 			</table>
-			<a class="btn btn-outline-info" href="">Edit</a>
-			<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">Back</a>
+			<a class="btn btn-outline-info" href="">
+				<i class="fas fa-edit"></i> Edit
+			</a>
+			<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">
+				<i class="fas fa-backward"></i> Back
+			</a>
 		</div>
 		<div class="col-6">
 			<h5>Linked Orders</h5>
-			<table class="table">
-				<tr>
-					<th>No.</th>
-					<th>Date</th>
-					<th>Type</th>
-					<th>Num</th>
-					<th>Val</th>
-				</tr>
-				{% for o in orders_linked %}
-				<tr>
-					<td>{{o.pk}}</td>
-					<td>{{o.datetime}}</td>
-					<td>{%if o.is_buy%}現物買{%else%}現物売{%endif%}</td>
-					<td>{{o.num}}</td>
-					<td>{{o.val}}</td>
-				</tr>
-				{%endfor%}
-			</table>
-			<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
-        <i class="fas fa-user-circle"></i> Link_orders
-      </button>
-			<button class="btn btn-outline-secondary">Unlink orders</button>
+			<form action="" method="post">
+				<table class="table">
+					<tr>
+						<th></th>
+						<th>No.</th>
+						<th>Date</th>
+						<th>Type</th>
+						<th>Num</th>
+						<th>Val</th>
+					</tr>
+					{% for ol in orders_linked %}
+					<tr>
+						<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
+						<td>{{ol.pk}}</td>
+						<td>{{ol.datetime}}</td>
+						<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
+						<td>{{ol.num | intcomma}}</td>
+						<td>{{ol.val | intcomma}}</td>
+					</tr>
+					{%endfor%}
+				</table>
+				<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
+	        <i class="fas fa-link"></i> Link_orders
+	      </button>
+				<button type="submit" name="post_type" value="unlink_orders" class="btn btn-outline-secondary">
+					<i class="fas fa-unlink"></i> Unlink orders
+				</button>
+				{% csrf_token %}
+			</form>
 		</div>
 	</div>
 </div>
