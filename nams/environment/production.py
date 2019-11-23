@@ -6,9 +6,9 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': "nams",
-        "USER": "temp",  #env('FKMANAGE_DB_USER'),
-        "PASSWORD": "temp",  #env('FKMANAGE_DB_PASSWORD'),
-        'HOST': "temp",  #env("FKMANAGE_DB_HOST"),
+        "USER": env('FKMANAGE_DB_USER'),
+        "PASSWORD": env('FKMANAGE_DB_PASSWORD'),
+        'HOST': env("FKMANAGE_DB_HOST"),
         "POST": "",
         "ATOMIC_REQUESTS": True,
     }
