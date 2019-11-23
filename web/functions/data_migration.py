@@ -28,7 +28,8 @@ def order():
         data = r.json()
         print(data)
         for d in data['results']:
-            d['stock'] = Stock.objects.get(code=d['stock']['code'])
+            stock = Stock.objects.get(code=d['stock']['code'])
+            d['stock'] = stock
             d['val'] = d['price']
             d['is_simulated'] = False
             d['is_buy'] = True if d['order_type'] == "現物買" else False
@@ -37,15 +38,14 @@ def order():
             d.pop('price')
             d.pop('order_type')
             d.pop('chart')
-            print(d)
             o = Order.objects.create(**d)
             # entry
             if not o.stock.is_trust and o.is_buy:
                 ed = {
                     "user": user,
-                    "stock": o.stock,
+                    "stock": stock,
                     "is_simulated": False,
-                    "is_nisa": o.is_nisa,
+                    "is_nisa": d['is_nisa'],
                 }
                 entry = Entry.objects.create(**ed)
                 o.entry = entry
