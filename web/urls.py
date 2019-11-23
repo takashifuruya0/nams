@@ -1,7 +1,6 @@
 # coding:utf-8
 from django.conf.urls import url
-from django.contrib.auth.decorators import login_required
-from web.views import views_main
+from web.templates.views import views_main
 
 app_name = 'web'
 urlpatterns = [

@@ -1,0 +1,82 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Entry Edit
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<form method="post" action="">
+			<div class="col-12">
+				<h5>Entry Edit</h5>
+				<table class="table">
+					<tr>
+						<th>Simulation</th>
+						<td><input type="checkbox" {%if entry.is_simulated%}checked{%endif%}></td>
+					</tr>
+					<tr>
+						<th>Stock</th>
+						<td>{{entry.stock}}</td>
+					</tr>
+					<tr>
+						<th>NISA</th>
+						<td><input type="checkbox" {%if entry.is_nisa%}checked{%endif%}></td>
+					</tr>
+					<tr>
+						<th>Open Date</th>
+						<td>{{entry.date_open}}</td>
+					</tr>
+					<tr>
+						<th>Close Date</th>
+						<td>{{entry.date_close}}</td>
+					</tr>
+					<tr>
+						<th>Closed</th>
+						<td><input type="checkbox" disabled {%if entry.is_closed%}checked{%endif%}></td>
+					</tr>
+					<tr>
+						<th>Remaining</th>
+						<td>{{entry.remaining | intcomma}}</td>
+					</tr>
+					<tr>
+						<th>Profit</th>
+						<td>¥{{entry.profit | intcomma}}</td>
+					</tr>
+					<tr>
+						<th>Reason</th>
+						<td>{{entry.reason_win_loss}}</td>
+					</tr>
+					<tr>
+						<th>Reason</th>
+						<td>
+							<select name=""
+						</td>
+					</tr>
+					<tr>
+						<th>Memo</th>
+						<td><textarea placeholder="{{entry.memo}}"></td>
+					</tr>
+				</table>
+				<a class="btn btn-outline-info" href="">
+					<i class="fas fa-edit"></i> Edit
+				</a>
+				<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">
+					<i class="fas fa-backward"></i> Back
+				</a>
+			</div>
+			<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
+        <i class="fas fa-link"></i> Submit
+      </button>
+			<a href="{%url 'web:entry_detail' entry_id=entry.pk%}" class="btn btn-outline-secondary">
+				<i class="fas fa-unlink"></i> Back
+			</a>
+			</button>
+			{% csrf_token %}
+		</form>
+	</div>
+</div>
+
+<!-- Modal new-record -->
+{% include 'web/modal/modal_link_orders.html' %}
+{% endblock %}
