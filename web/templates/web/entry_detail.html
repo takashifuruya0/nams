@@ -11,8 +11,16 @@
 			<h5>Entry Overview</h5>
 			<table class="table">
 				<tr>
+					<th>Simulation</th>
+					<td><input type="checkbox" disabled {%if entry.is_simulated%}checked{%endif%}></td>
+				</tr>
+				<tr>
 					<th>Stock</th>
 					<td>{{entry.stock}}</td>
+				</tr>
+				<tr>
+					<th>NISA</th>
+					<td><input type="checkbox" disabled {%if entry.is_nisa%}checked{%endif%}></td>
 				</tr>
 				<tr>
 					<th>Open Date</th>
@@ -23,8 +31,8 @@
 					<td>{{entry.date_close}}</td>
 				</tr>
 				<tr>
-					<th>Status</th>
-					<td>{% if entry.is_closed %}Close{%else%}Open{%endif%}</td>
+					<th>Closed</th>
+					<td><input type="checkbox" disabled {%if entry.is_closed%}checked{%endif%}></td>
 				</tr>
 				<tr>
 					<th>Remaining</th>
@@ -34,7 +42,17 @@
 					<th>Profit</th>
 					<td>¥{{entry.profit}}</td>
 				</tr>
+				<tr>
+					<th>Reason</th>
+					<td>{{entry.reason_win_loss}}</td>
+				</tr>
+				<tr>
+					<th>Memo</th>
+					<td>{{entry.memo}}</td>
+				</tr>
 			</table>
+			<a class="btn btn-outline-info" href="">Edit</a>
+			<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">Back</a>
 		</div>
 		<div class="col-6">
 			<h5>Linked Orders</h5>
@@ -56,13 +74,12 @@
 				</tr>
 				{%endfor%}
 			</table>
-			<button type="button" class="btn btn-outline-info btn-block" data-toggle="modal" data-target="#link_orders">
+			<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
         <i class="fas fa-user-circle"></i> Link_orders
       </button>
-			<button class="btn btn-secondary">Unlink orders</button>
+			<button class="btn btn-outline-secondary">Unlink orders</button>
 		</div>
 	</div>
-	<a class="btn btn-secondary" href="{%url 'web:entry_list' %}">Back</a>
 </div>
 
 <!-- Modal new-record -->

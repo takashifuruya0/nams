@@ -89,6 +89,8 @@ def entry_list(request):
         "msg": msg,
         "user": request.user,
         "entrys": entrys,
+        "sum_profit": sum([e.profit() for e in entrys]),
+        "count_won": sum([(1 if e.profit() > 0 else 0) for e in entrys]),
     }
     return TemplateResponse(request, "web/entry_list.html", output)
 
