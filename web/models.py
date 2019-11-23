@@ -79,6 +79,24 @@ class Entry(models.Model):
                     profit += (o.num * o.val - o.commission)
         return profit
 
+    def date_open(self):
+        return min([o.datetime for o in self.order_set.filter(is_buy=True)])
+
+    def date_close(self):
+        os = self.order_set.filter(is_buy=False)
+        if os.exists():
+            return max([o.datetime for o in os])
+        else:
+            return
+
+    def update(self, *args, **kwargs):
+        self.is_closed = True if self.remaining() == 0 else False
+        super().update(*args, **kwargs)
+
+    def save(self, *args, **kwargs):
+        self.is_closed = True if self.remaining() == 0 else False
+        super().save(*args, **kwargs)
+
 
 class Order(models.Model):
     objects = None

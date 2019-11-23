@@ -1,63 +1,66 @@
 {% extends "web/base.html" %}
 
 {% block title %}
-    Entry View
+    Entry List
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-6">
-			<h5>Entry Overview</h5>
-			<table class="table">
-				<tr>
-					<th>Stock</th>
-					<td>{{entry.stock}}</td>
-				</tr>
-				<tr>
-					<th>Open Date</th>
-					<td>{{entry.date_open}}</td>
-				</tr>
-				<tr>
-					<th>Close Date</th>
-					<td>{{entry.date_close}}</td>
-				</tr>
-				<tr>
-					<th>Status</th>
-					<td>{% if entry.is_closed %}Close{%else%}Open{%endif%}</td>
-				</tr>
-				<tr>
-					<th>Remaining</th>
-					<td>{{entry.remaining}}</td>
-				</tr>
-				<tr>
-					<th>Profit</th>
-					<td>¥{{entry.profit}}</td>
-				</tr>
-			</table>
-		</div>
-		<div class="col-6">
-			<h5>Linked Orders</h5>
-			<table class="table">
-				<tr>
-					<th>No.</th>
-					<th>Date</th>
-					<th>Type</th>
-					<th>Num</th>
-					<th>Val</th>
-				</tr>
-				{% for o in entry.order_set.all %}
-				<tr>
-					<td>{{o.pk}}</td>
-					<td>{{o.datetime}}</td>
-					<td>{%if o.is_buy%}現物買{%else%}現物売{%endif%}</td>
-					<td>{{o.num}}</td>
-					<td>{{o.val}}</td>
-				</tr>
-				{%endfor%}
-			</table>
-			<button class="btn btn-primary">Link orders</button>
-			<button class="btn btn-secondary">Unlink orders</button>
+		<div class="col-12">
+			<form action="" method="POST">
+				<a href="?is_closed=true" class="btn btn-info">Closed</a>
+				<a href="?is_open=true" class="btn btn-info">Open</a>
+				<button type="submit" class="btn btn-primary" name="post_type" value="merge_entrys">Merge</button>
+	<!--			<a href="?is_won=true" class="btn btn-info">Won</a>-->
+	<!--			<a href="?is_lost=true" class="btn btn-info">Lost</a>-->
+				<h5>Entrys</h5>
+				<table class="table">
+			    <thead>
+			      <tr>
+				      <th></th>
+				      <th>No.</th>
+				      <th>Stock</th>
+				      <th>Status</th>
+				      <th>Open</th>
+				      <th>Close</th>
+				      <th>Profit</th>
+							<th>Remaining</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      {% for entry in entrys %}
+			      <tr>
+				      <td>
+					      <input type="checkbox" name="pk" value="{{entry.pk}}">
+				      </td>
+				      <td>
+					      <a href="{% url 'web:entry_detail' entry_id=entry.pk %}">{{entry.pk}}</a>
+				      </td>
+			        <td>{{entry.stock}}</td>
+				      <td>
+					      <h5>
+					      {%if entry.is_closed%}
+						      {%if entry.profit > 0 %}
+						      <span class="badge bg-large bg-success">Win</span>
+						      {%else%}
+						      <span class="badge bg-danger">Lose</span>
+						      {%endif%}
+					      {%else%}
+					        <span class="badge">Open</span>
+					      {%endif%}
+					      </h5>
+				      </td>
+				      <td>{{entry.date_open}}</td>
+				      <td>{{entry.date_close}}</td>
+				      <td>¥{{entry.profit}}</td>
+				      <td>{{entry.remaining}}</td>
+			      </tr>
+			      {% endfor %}
+			    </tbody>
+		    </table>
+				{% csrf_token %}
+			</form>
 		</div>
 	</div>
 </div>

@@ -31,7 +31,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^nams/', include('web.urls', namespace='web')),
     url(r'^api/', include(router.urls)),
-    url(r'^document/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
+    url(r'^document_nams/(?P<path>.*)$', serve, {'document_root': settings.MEDIA_ROOT}),
     # login/logout
     url(r'^login$', auth_views.LoginView.as_view(template_name="web/login.html"), name="login_nams"),
     url(r'^logout$', auth_views.LogoutView.as_view(), name='logout_nams'),

@@ -13,8 +13,47 @@
 					<h3>Top</h3>
 		    </div>
 		    <div class="card-body">
-					<h5 class="card-title">Message</h5>
-			    <p class="card-text">{{msg}}</p>
+					<h5 class="card-title">Entrys</h5>
+			    <table class="table">
+				    <thead>
+				      <tr>
+					      <th>No.</th>
+					      <th>Stock</th>
+					      <th>Status</th>
+					      <th>Open</th>
+					      <th>Close</th>
+					      <th>Profit</th>
+								<th>Remaining</th>
+				      </tr>
+				    </thead>
+				    <tbody>
+				      {% for entry in entrys %}
+				      <tr>
+					      <td>
+						      <a href="{% url 'web:entry_detail' entry_id=entry.pk %}">{{entry.pk}}</a>
+					      </td>
+				        <td>{{entry.stock}}</td>
+					      <td>
+						      <h5>
+						      {%if entry.is_closed%}
+							      {%if entry.profit > 0 %}
+							      <span class="badge bg-large bg-success">Win</span>
+							      {%else%}
+							      <span class="badge bg-danger">Lose</span>
+							      {%endif%}
+						      {%else%}
+						        <span class="badge">Open</span>
+						      {%endif%}
+						      </h5>
+					      </td>
+					      <td>{{entry.date_open}}</td>
+					      <td>{{entry.date_close}}</td>
+					      <td>¥{{entry.profit}}</td>
+					      <td>{{entry.remaining}}</td>
+				      </tr>
+				      {% endfor %}
+				    </tbody>
+			    </table>
 		    </div>
 	    </div>
     </div>

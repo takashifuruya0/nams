@@ -1,0 +1,42 @@
+<!-- Modal orders_unlinked -->
+<div class="modal fade" id="link_orders" tabindex="-1" role="dialog" aria-labelledby="new_record" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="new_record_Label">
+          <i class="fas fa-user-circle"></i> Link Orders
+        </h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form method="post" action="">
+        <div class="modal-body">
+          {% csrf_token %}
+          <table class="table">
+            <tr>
+              <th></th>
+              <th>Date</th>
+              <th>Type</th>
+              <th>Num</th>
+              <th>Val</th>
+            </tr>
+            {% for ou in orders_unlinked %}
+            <tr>
+              <td><input type="checkbox" value="{{ou.pk}}" name="pk"></td>
+              <td>{{ou.datetime}}</td>
+              <td>{%if ou.is_buy%}現物買{%else%}現物売{%endif%}</td>
+              <td>{{ou.num}}</td>
+              <td>{{ou.val}}</td>
+            </tr>
+            {% endfor %}
+          </table>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" name="post_type" value="link_orders">Link</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

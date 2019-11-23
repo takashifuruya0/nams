@@ -46,7 +46,7 @@
 					<th>Num</th>
 					<th>Val</th>
 				</tr>
-				{% for o in entry.order_set.all %}
+				{% for o in orders_linked %}
 				<tr>
 					<td>{{o.pk}}</td>
 					<td>{{o.datetime}}</td>
@@ -56,9 +56,15 @@
 				</tr>
 				{%endfor%}
 			</table>
-			<button class="btn btn-primary">Link orders</button>
+			<button type="button" class="btn btn-outline-info btn-block" data-toggle="modal" data-target="#link_orders">
+        <i class="fas fa-user-circle"></i> Link_orders
+      </button>
 			<button class="btn btn-secondary">Unlink orders</button>
 		</div>
 	</div>
+	<a class="btn btn-secondary" href="{%url 'web:entry_list' %}">Back</a>
 </div>
+
+<!-- Modal new-record -->
+{% include 'web/modal/modal_link_orders.html' %}
 {% endblock %}
