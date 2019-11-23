@@ -26,6 +26,7 @@ def order():
         url = "https://www.fk-management.com/drm/asset/order/?limit=200&offset=0"
         r = requests.get(url)
         data = r.json()
+        print(data)
         for d in data['results']:
             d['stock'] = Stock.objects.get(code=d['stock']['code'])
             d['val'] = d['price']
