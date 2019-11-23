@@ -136,6 +136,15 @@ class Order(models.Model):
         bs = "B" if self.is_buy else "S"
         return "{}_{}_{}".format(bs, self.datetime, self.stock)
 
+    def update(self, *args, **kwargs):
+        super.update(*args, **kwargs)
+        if self.entry:
+            self.entry.save()
+
+    def save(self, *args, **kwargs):
+        super.save(*args, **kwargs)
+        if self.entry:
+            self.entry.save()
 
 class AssetStatus(models.Model):
     objects = None
