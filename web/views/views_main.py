@@ -133,6 +133,18 @@ def entry_detail(request, entry_id):
 
 
 @login_required
+def entry_edit(request, entry_id):
+    if request.method == "POST":
+        redirect('web:entry_detail', entry_id=entry_id)
+    elif request.method == "GET":
+        entry = Entry.objects.get(id=entry_id)
+        output = {
+            "entry": entry,
+        }
+        return TemplateResponse(request, "web/entry_edit.html", output)
+
+
+@login_required
 def order_detail(request, order_id):
     msg = "Hello Order Detail"
     logger.info(msg)

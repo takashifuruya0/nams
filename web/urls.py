@@ -1,6 +1,6 @@
 # coding:utf-8
 from django.conf.urls import url
-from web.templates.views import views_main
+from web.views import views_main
 
 app_name = 'web'
 urlpatterns = [
