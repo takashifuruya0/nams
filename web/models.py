@@ -91,7 +91,8 @@ class Entry(models.Model):
 
     def update(self, *args, **kwargs):
         self.is_closed = True if self.remaining() == 0 else False
-        if not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
+
+        if self.order_set.exists() and not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
             raise Exception('Different stocks are linked')
         if self.remaining() < 0:
             raise Exception('remaining should be over 0')
@@ -101,7 +102,7 @@ class Entry(models.Model):
 
     def save(self, *args, **kwargs):
         self.is_closed = True if self.remaining() == 0 else False
-        if not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
+        if self.order_set.exists() and not self.order_set.count() == self.order_set.filter(stock=self.order_set.first().stock).count():
             raise Exception('Different stocks are linked')
         if self.remaining() < 0:
             raise Exception('remaining should be over 0')
