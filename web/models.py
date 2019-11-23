@@ -37,7 +37,8 @@ class ReasonWinLoss(models.Model):
     is_win = models.BooleanField()
 
     def __str__(self):
-        return "{}".format(self.reason)
+        header = "W" if self.is_win else "L"
+        return "{}{}".format(header, self.reason)
 
 
 class Entry(models.Model):
