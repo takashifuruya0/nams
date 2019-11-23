@@ -1,6 +1,8 @@
 from web.models import *
 import requests
 from django.contrib.auth.models import User
+import logging
+logger = logging.getLogger('django')
 
 
 def stock():
@@ -14,7 +16,7 @@ def stock():
             Stock.objects.create(**d)
         result = True
     except Exception as e:
-        print("{}".format(e))
+        logger.error(e)
         result = False
     finally:
         return result
@@ -26,7 +28,8 @@ def order():
         url = "https://www.fk-management.com/drm/asset/order/?limit=200&offset=0"
         r = requests.get(url)
         data = r.json()
-        print(data)
+        logger.info("========data========")
+        logger.info(data)
         for d in data['results']:
             stock = Stock.objects.get(code=d['stock']['code'])
             d['stock'] = stock
@@ -38,6 +41,8 @@ def order():
             d.pop('price')
             d.pop('order_type')
             d.pop('chart')
+            logger.info("========d========")
+            logger.info(d)
             o = Order.objects.create(**d)
             # entry
             if not o.stock.is_trust and o.is_buy:
@@ -52,38 +57,42 @@ def order():
                 o.save()
         result = True
     except Exception as e:
-        print("{}".format(e))
+        logger.error(e)
         result = False
     finally:
         return result
 
-    d = {
-        "datetime": None,
-        "order_type": "",
-        "stock": {
-            "code": "",
-            "name": "",
-            "industry": "",
-            "market": ""
-        },
-        "num": None,
-        "price": None,
-        "commission": None,
-        "is_nisa": False,
-        "chart": None
-    }
+    # d = {
+    #     "datetime": None,
+    #     "order_type": "",
+    #     "stock": {
+    #         "code": "",
+    #         "name": "",
+    #         "industry": "",
+    #         "market": ""
+    #     },
+    #     "num": None,
+    #     "price": None,
+    #     "commission": None,
+    #     "is_nisa": False,
+    #     "chart": None
+    # }
 
 
 def init():
+    # delete
+    Order.objects.all().delete()
+    Entry.objects.all().delete()
+    Stock.objects.all().delete()
     # stock
     s = stock()
     if s:
-        print("Stocks were migrated")
+        logger.info("Stocks were migrated")
         # order and entry
         o = order()
         if o:
-            print("Orders were migrated")
+            logger.info("Orders were migrated")
             w = ReasonWinLoss.objects.create(is_win=True, reason="W_0_default")
             l = ReasonWinLoss.objects.create(is_win=False, reason="L_0_default")
             if w and l:
-                print("ReasonWinLoss were created")
+                logger.info("ReasonWinLoss were created")
