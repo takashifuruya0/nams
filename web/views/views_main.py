@@ -2,9 +2,9 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.views.generic import TemplateView
 from django.template.response import TemplateResponse
 from django.conf import settings
+from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order
@@ -135,11 +135,24 @@ def entry_detail(request, entry_id):
 @login_required
 def entry_edit(request, entry_id):
     if request.method == "POST":
-        redirect('web:entry_detail', entry_id=entry_id)
+        entry = Entry.objects.get(id=entry_id)
+        form = EntryForm(request.POST, instance=entry)
+        if form.is_valid():
+            form.save()
+            messages.info(request, "Entry {} was updated".format(entry_id))
+        return redirect('web:entry_detail', entry_id=entry_id)
     elif request.method == "GET":
         entry = Entry.objects.get(id=entry_id)
+        initial = {
+            "memo": entry.memo,
+            "reason_win_loss": entry.reason_win_loss,
+            "border_loss_cut": entry.border_loss_cut,
+            "border_profit_determination": entry.border_profit_determination,
+        }
+        form = EntryForm(initial=initial)
         output = {
             "entry": entry,
+            "form": form
         }
         return TemplateResponse(request, "web/entry_edit.html", output)
 

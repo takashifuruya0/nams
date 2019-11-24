@@ -92,7 +92,7 @@ def init():
         o = order()
         if o:
             logger.info("Orders were migrated")
-            w = ReasonWinLoss.objects.create(is_win=True, reason="W_0_default")
-            l = ReasonWinLoss.objects.create(is_win=False, reason="L_0_default")
+            w = ReasonWinLoss.objects.create(is_win=True, reason="0_default")
+            l = ReasonWinLoss.objects.create(is_win=False, reason="0_default")
             if w and l:
                 logger.info("ReasonWinLoss were created")

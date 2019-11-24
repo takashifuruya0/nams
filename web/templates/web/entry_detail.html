@@ -1,26 +1,21 @@
 {% extends "web/base.html" %}
 {% load humanize %}
 {% block title %}
-    Entry View
+    Entry Detail
 {% endblock %}
 
 {% block body %}
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-6">
-			<h5>Entry Overview</h5>
+			<h4>
+				Entry Overview
+				{% include 'web/part/entry_type.html' %}
+			</h4>
 			<table class="table">
-				<tr>
-					<th>Simulation</th>
-					<td><input type="checkbox" disabled {%if entry.is_simulated%}checked{%endif%}></td>
-				</tr>
 				<tr>
 					<th>Stock</th>
 					<td>{{entry.stock}}</td>
-				</tr>
-				<tr>
-					<th>NISA</th>
-					<td><input type="checkbox" disabled {%if entry.is_nisa%}checked{%endif%}></td>
 				</tr>
 				<tr>
 					<th>Open Date</th>
@@ -29,10 +24,6 @@
 				<tr>
 					<th>Close Date</th>
 					<td>{{entry.date_close}}</td>
-				</tr>
-				<tr>
-					<th>Closed</th>
-					<td><input type="checkbox" disabled {%if entry.is_closed%}checked{%endif%}></td>
 				</tr>
 				<tr>
 					<th>Remaining</th>
@@ -51,7 +42,7 @@
 					<td>{{entry.memo}}</td>
 				</tr>
 			</table>
-			<a class="btn btn-outline-info" href="">
+			<a class="btn btn-outline-info" href="{%url 'web:entry_edit' entry_id=entry.pk%}">
 				<i class="fas fa-edit"></i> Edit
 			</a>
 			<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">
@@ -59,36 +50,53 @@
 			</a>
 		</div>
 		<div class="col-6">
-			<h5>Linked Orders</h5>
-			<form action="" method="post">
+			<h4>Order Overview</h4>
 				<table class="table">
 					<tr>
-						<th></th>
-						<th>No.</th>
-						<th>Date</th>
-						<th>Type</th>
-						<th>Num</th>
-						<th>Val</th>
+						<th>買付口数</th>
+						<th>買付平均</th>
+						<th>売付口数</th>
+						<th>売付平均</th>
 					</tr>
-					{% for ol in orders_linked %}
 					<tr>
-						<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
-						<td>{{ol.pk}}</td>
-						<td>{{ol.datetime}}</td>
-						<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
-						<td>{{ol.num | intcomma}}</td>
-						<td>{{ol.val | intcomma}}</td>
+						<td>{{entry.num_buy}}</td>
+						<td>¥{{entry.val_buy | intcomma}}</td>
+						<td>{{entry.num_sell}}</td>
+						<td>¥{{entry.val_sell | intcomma}}</td>
 					</tr>
-					{%endfor%}
 				</table>
-				<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
-	        <i class="fas fa-link"></i> Link_orders
-	      </button>
-				<button type="submit" name="post_type" value="unlink_orders" class="btn btn-outline-secondary">
-					<i class="fas fa-unlink"></i> Unlink orders
-				</button>
-				{% csrf_token %}
-			</form>
+				<hr>
+				<h5>Linked Orders</h5>
+				<form action="" method="post">
+					<table class="table">
+						<tr>
+							<th></th>
+							<th>No.</th>
+							<th>Date</th>
+							<th>Type</th>
+							<th>Num</th>
+							<th>Val</th>
+						</tr>
+						{% for ol in orders_linked %}
+						<tr>
+							<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
+							<td>{{ol.pk}}</td>
+							<td>{{ol.datetime}}</td>
+							<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
+							<td>{{ol.num | intcomma}}</td>
+							<td>{{ol.val | intcomma}}</td>
+						</tr>
+						{%endfor%}
+					</table>
+					<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
+		        <i class="fas fa-link"></i> Link_orders
+		      </button>
+					<button type="submit" name="post_type" value="unlink_orders" class="btn btn-outline-secondary">
+						<i class="fas fa-unlink"></i> Unlink orders
+					</button>
+					{% csrf_token %}
+				</form>
+			</div>
 		</div>
 	</div>
 </div>

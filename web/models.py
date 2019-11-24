@@ -1,6 +1,7 @@
 from django.db import models
 from datetime import date, datetime
 from django.contrib.auth.models import User
+from django.db.models import Sum, Avg
 # from django.utils import timezone
 # Create your models here.
 
@@ -43,12 +44,12 @@ class ReasonWinLoss(models.Model):
 
 class Entry(models.Model):
     objects = None
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
-    stock = models.ForeignKey(Stock, on_delete=models.CASCADE)
-    border_loss_cut = models.FloatField(blank=True, null=True)
-    border_profit_determination = models.FloatField(blank=True, null=True)
-    reason_win_loss = models.ForeignKey(ReasonWinLoss, on_delete=models.CASCADE, blank=True, null=True)
-    memo = models.TextField(max_length=400, blank=True, null=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="ユーザ")
+    stock = models.ForeignKey(Stock, on_delete=models.CASCADE, verbose_name="銘柄")
+    border_loss_cut = models.FloatField(blank=True, null=True, verbose_name="損切価格")
+    border_profit_determination = models.FloatField(blank=True, null=True, verbose_name="利確価格")
+    reason_win_loss = models.ForeignKey(ReasonWinLoss, on_delete=models.CASCADE, blank=True, null=True, verbose_name="理由")
+    memo = models.TextField(max_length=400, blank=True, null=True, verbose_name="メモ")
     is_closed = models.BooleanField(default=False)
     is_simulated = models.BooleanField()
     is_nisa = models.BooleanField()
@@ -56,17 +57,39 @@ class Entry(models.Model):
     def __str__(self):
         return "E{:0>3}_{}".format(self.pk, self.stock)
 
-    def num_orders(self):
+    def val_order(self, is_buy):
+        orders = self.order_set.filter(is_buy=is_buy)
+        val = 0
+        if orders.exists():
+            for o in orders:
+                val += (o.val * o.num)
+            val = val/self.num_order(is_buy)
+        return val
+
+    def num_order(self, is_buy):
+        orders = self.order_set.filter(is_buy=is_buy)
+        num = 0
+        if orders.exists():
+            num = orders.aggregate(num=Sum('num'))['num']
+        return num
+
+    def num_buy(self):
+        return self.num_order(is_buy=True)
+
+    def num_sell(self):
+        return self.num_order(is_buy=False)
+
+    def val_buy(self):
+        return self.val_order(is_buy=True)
+
+    def val_sell(self):
+        return self.val_order(is_buy=False)
+
+    def num_linked_orders(self):
         return self.order_set.count()
 
     def remaining(self):
-        orders = self.order_set.all()
-        remaining = 0
-        for o in orders:
-            if o.is_buy:
-                remaining += o.num
-            else:
-                remaining -= o.num
+        remaining = self.num_buy() - self.num_sell()
         return remaining
 
     def profit(self):

@@ -1,0 +1,13 @@
+{%if entry.is_nisa%}
+<label class="badge bg-danger">NISA</label>
+{%endif%}
+{%if entry.is_simulated%}
+<label class="badge bg-warning">Simulation</label>
+{%else%}
+<label class="badge bg-info">Actual</label>
+{%endif%}
+{%if entry.is_closed%}
+<label class="badge bg-secondary">Closed</label>
+{%else%}
+<label class="badge bg-success">Open</label>
+{%endif%}

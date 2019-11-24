@@ -7,73 +7,67 @@
 {% block body %}
 <div class="container-fluid">
 	<div class="row">
-		<form method="post" action="">
-			<div class="col-12">
-				<h5>Entry Edit</h5>
-				<table class="table">
-					<tr>
-						<th>Simulation</th>
-						<td><input type="checkbox" {%if entry.is_simulated%}checked{%endif%}></td>
-					</tr>
-					<tr>
-						<th>Stock</th>
-						<td>{{entry.stock}}</td>
-					</tr>
-					<tr>
-						<th>NISA</th>
-						<td><input type="checkbox" {%if entry.is_nisa%}checked{%endif%}></td>
-					</tr>
-					<tr>
-						<th>Open Date</th>
-						<td>{{entry.date_open}}</td>
-					</tr>
-					<tr>
-						<th>Close Date</th>
-						<td>{{entry.date_close}}</td>
-					</tr>
-					<tr>
-						<th>Closed</th>
-						<td><input type="checkbox" disabled {%if entry.is_closed%}checked{%endif%}></td>
-					</tr>
-					<tr>
-						<th>Remaining</th>
-						<td>{{entry.remaining | intcomma}}</td>
-					</tr>
-					<tr>
-						<th>Profit</th>
-						<td>¥{{entry.profit | intcomma}}</td>
-					</tr>
-					<tr>
-						<th>Reason</th>
-						<td>{{entry.reason_win_loss}}</td>
-					</tr>
-					<tr>
-						<th>Reason</th>
-						<td>
-							<select name=""
-						</td>
-					</tr>
-					<tr>
-						<th>Memo</th>
-						<td><textarea placeholder="{{entry.memo}}"></td>
-					</tr>
+		<div class="col-6">
+			<form method="post" action="">
+				<h4>
+					Entry Edit
+				</h4>
+				<table>
+					{{form}}
 				</table>
-				<a class="btn btn-outline-info" href="">
-					<i class="fas fa-edit"></i> Edit
-				</a>
-				<a class="btn btn-outline-secondary" href="{%url 'web:entry_list' %}">
+				{%csrf_token%}
+				<button type="submit" class="btn btn-outline-info">
+	        <i class="fas fa-check"></i> Submit
+	      </button>
+				<a href="{%url 'web:entry_detail' entry_id=entry.pk%}" class="btn btn-outline-secondary">
 					<i class="fas fa-backward"></i> Back
 				</a>
-			</div>
-			<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
-        <i class="fas fa-link"></i> Submit
-      </button>
-			<a href="{%url 'web:entry_detail' entry_id=entry.pk%}" class="btn btn-outline-secondary">
-				<i class="fas fa-unlink"></i> Back
-			</a>
-			</button>
-			{% csrf_token %}
-		</form>
+			</form>
+		</div>
+		<div class="col-6">
+			<h5>Order Overview</h5>
+			<table class="table">
+				<tr>
+					<th>買付口数</th>
+					<th>買付平均</th>
+					<th>売付口数</th>
+					<th>売付平均</th>
+				</tr>
+				<tr>
+					<td>{{entry.num_buy}}</td>
+					<td>¥{{entry.val_buy | intcomma}}</td>
+					<td>{{entry.num_sell}}</td>
+					<td>¥{{entry.val_sell | intcomma}}</td>
+				</tr>
+			</table>
+			<hr>
+			<h5>
+				Entry Overview
+				{% include 'web/part/entry_type.html' %}
+			</h5>
+			<table class="table">
+				<tr>
+					<th>Stock</th>
+					<td>{{entry.stock}}</td>
+				</tr>
+				<tr>
+					<th>Open Date</th>
+					<td>{{entry.date_open}}</td>
+				</tr>
+				<tr>
+					<th>Close Date</th>
+					<td>{{entry.date_close}}</td>
+				</tr>
+				<tr>
+					<th>Remaining</th>
+					<td>{{entry.remaining | intcomma}}</td>
+				</tr>
+				<tr>
+					<th>Profit</th>
+					<td>¥{{entry.profit | intcomma}}</td>
+				</tr>
+			</table>
+		</div>
 	</div>
 </div>
 
