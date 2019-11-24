@@ -23,7 +23,25 @@
 				</tr>
 				<tr>
 					<th>Close Date</th>
-					<td>{{entry.date_close}}</td>
+					<td>{{entry.date_close | default_if_none:"-"}}</td>
+				</tr>
+				<tr>
+					<th>利確価格</th>
+					<td>
+						¥{{entry.border_profit_determination |default_if_none:"-" | intcomma }}
+						{% if entry.border_profit_determination < entry.val_sell %}
+						<label class="badge bg-success"><i class="fas fa-thumbs-up"></i> Good</label>
+						{%endif%}
+					</td>
+				</tr>
+				<tr>
+					<th>損切価格</th>
+					<td>
+						¥{{entry.border_loss_cut |default_if_none:"-" | intcomma}}
+						{% if entry.border_loss_cut > entry.val_sell %}
+						<label class="badge bg-danger"><i class="fas fa-thumbs-down"></i> Bad</label>
+						{%endif%}
+					</td>
 				</tr>
 				<tr>
 					<th>Remaining</th>
@@ -35,7 +53,7 @@
 				</tr>
 				<tr>
 					<th>Reason</th>
-					<td>{{entry.reason_win_loss}}</td>
+					<td>{{entry.reason_win_loss| default_if_none:"-"}}</td>
 				</tr>
 				<tr>
 					<th>Memo</th>
@@ -51,56 +69,63 @@
 		</div>
 		<div class="col-6">
 			<h4>Order Overview</h4>
+			<table class="table">
+				<tr>
+					<th>買付口数</th>
+					<th>買付平均</th>
+					<th>売付口数</th>
+					<th>売付平均</th>
+				</tr>
+				<tr>
+					<td>{{entry.num_buy}}</td>
+					<td>¥{{entry.val_buy | intcomma}}</td>
+					<td>{{entry.num_sell}}</td>
+					<td>¥{{entry.val_sell | intcomma}}</td>
+				</tr>
+			</table>
+			<hr>
+			<h5>Linked Orders</h5>
+			<form action="" method="post">
 				<table class="table">
 					<tr>
-						<th>買付口数</th>
-						<th>買付平均</th>
-						<th>売付口数</th>
-						<th>売付平均</th>
+						<th></th>
+						<th>No.</th>
+						<th>Date</th>
+						<th>Type</th>
+						<th>Num</th>
+						<th>Val</th>
 					</tr>
+					{% for ol in orders_linked %}
 					<tr>
-						<td>{{entry.num_buy}}</td>
-						<td>¥{{entry.val_buy | intcomma}}</td>
-						<td>{{entry.num_sell}}</td>
-						<td>¥{{entry.val_sell | intcomma}}</td>
+						<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
+						<td>{{ol.pk}}</td>
+						<td>{{ol.datetime}}</td>
+						<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
+						<td>{{ol.num | intcomma}}</td>
+						<td>{{ol.val | intcomma}}</td>
 					</tr>
+					{%endfor%}
 				</table>
-				<hr>
-				<h5>Linked Orders</h5>
-				<form action="" method="post">
-					<table class="table">
-						<tr>
-							<th></th>
-							<th>No.</th>
-							<th>Date</th>
-							<th>Type</th>
-							<th>Num</th>
-							<th>Val</th>
-						</tr>
-						{% for ol in orders_linked %}
-						<tr>
-							<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
-							<td>{{ol.pk}}</td>
-							<td>{{ol.datetime}}</td>
-							<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
-							<td>{{ol.num | intcomma}}</td>
-							<td>{{ol.val | intcomma}}</td>
-						</tr>
-						{%endfor%}
-					</table>
-					<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
-		        <i class="fas fa-link"></i> Link_orders
-		      </button>
-					<button type="submit" name="post_type" value="unlink_orders" class="btn btn-outline-secondary">
-						<i class="fas fa-unlink"></i> Unlink orders
-					</button>
-					{% csrf_token %}
-				</form>
-			</div>
+				<button type="button" class="btn btn-outline-info" data-toggle="modal" data-target="#link_orders">
+	        <i class="fas fa-link"></i> Link_orders
+	      </button>
+				<button type="submit" name="post_type" value="unlink_orders" class="btn btn-outline-secondary">
+					<i class="fas fa-unlink"></i> Unlink orders
+				</button>
+				{% csrf_token %}
+			</form>
 		</div>
 	</div>
+
+	<hr>
+	<div class="row">
+			<div class="col-12">
+				<canvas id="analysis" width="300" height="150"></canvas>
+			</div>
+		</div>
 </div>
 
 <!-- Modal new-record -->
 {% include 'web/modal/modal_link_orders.html' %}
+{% include 'web/part/chart.html' %}
 {% endblock %}

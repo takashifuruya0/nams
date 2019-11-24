@@ -1,0 +1,82 @@
+<script>
+var ctx = document.getElementById('analysis').getContext('2d');
+var options = {
+  responsive: true,
+  scales: {
+    yAxes: [{
+      id: "y-axis-1",   // Y軸のID
+      type: "linear",   // linear固定
+      position: "left", // どちら側に表示される軸か？
+    },
+    {
+      id: "y-axis-2",
+      type: "linear",
+      position: "right",
+      display: false,
+    }],
+    xAxes: [{
+      display: false,
+    }]
+  }
+}
+
+if (window.innerWidth > 768) {
+  ctx.canvas.width = 1000;
+  ctx.canvas.height = 350;
+}else{
+  ctx.canvas.width = 450;
+  ctx.canvas.height = 450;
+}
+
+var myChart = new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: [{%for svd in svds %}"{{svd.date}}",{%endfor%}],
+    datasets: [
+        {
+            type: "line",
+            label: 'Buy',
+            data: [
+                {% for bo in bos_detail %}"{{bo}}",{%endfor%}
+            ],
+            backgroundColor: "red",
+            borderColor: "red",
+            pointRadius: 7,
+            showLines: false,
+        },
+        {
+            type: "line",
+            label: 'Sell',
+            data: [
+                {% for so in sos_detail %}"{{so}}",{%endfor%}
+            ],
+            backgroundColor: "blue",
+            borderColor: "blue",
+            pointRadius: 7,
+            showLines: false,
+        },
+        {
+            type: "line",
+            label: '終値',
+            data: [
+                {%for svd in svds%}{{svd.val_close}},{%endfor%}
+            ],
+            backgroundColor: "rgba(0, 0, 0, 0.4)",
+            borderColor: "rgba(0, 0, 0, 0.4)",
+            fill: false,
+            pointRadius: 2,
+        },
+        {
+            type: "bar",
+            label: '出来高',
+            data: [
+                {%for svd in svds%}{{svd.turnover}},{%endfor%}
+            ],
+            backgroundColor: "rgba(255,153,0, 0.4)",
+            yAxisID: "y-axis-2",
+        }
+    ],
+  },
+  options: options,
+});
+</script>

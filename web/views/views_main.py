@@ -4,10 +4,12 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.template.response import TemplateResponse
 from django.conf import settings
+from datetime import date
+from dateutil.relativedelta import relativedelta
 from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
-from web.models import Entry, Order
+from web.models import Entry, Order, StockValueData
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -118,9 +120,27 @@ def entry_detail(request, entry_id):
         try:
             entry = Entry.objects.get(pk=entry_id, user=request.user)
             orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock)
+            edo = entry.date_open().date()
+            od = edo - relativedelta(days=7)
+            edc = entry.date_close().date() if entry.is_closed else date.today()
+            cd = edc + relativedelta(days=7) if entry.is_closed else date.today()
+            svds = StockValueData.objects.filter(stock=entry.stock, date__gt=od, date__lt=cd).order_by('date')
+            svds_count = svds.count()
+            date_list = dict()
+            for i, svd in enumerate(svds):
+                date_list[svd.date.__str__] = i
+            bos_detail = [None for i in range(svds_count)]
+            sos_detail = [None for i in range(svds_count)]
+            for o in entry.order_set.all():
+                order_date = o.datetime.date().__str__
+                if o.is_buy:
+                    bos_detail[date_list[order_date]] = o.val
+                else:
+                    sos_detail[date_list[order_date]] = o.val
         except Exception as e:
             logger.error(e)
             messages.error(request, "Not found or not authorized to access it")
+            messages.add_message(request, messages.ERROR, e)
             return redirect('web:main')
         output = {
             "msg": msg,
@@ -128,7 +148,11 @@ def entry_detail(request, entry_id):
             "entry": entry,
             "orders_unlinked": orders_unlinked,
             "orders_linked": entry.order_set.all().order_by('datetime'),
+            "svds": svds,
+            "bos_detail": bos_detail,
+            "sos_detail": sos_detail,
         }
+        logger.info(output)
         return TemplateResponse(request, "web/entry_detail.html", output)
 
 

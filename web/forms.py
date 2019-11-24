@@ -11,8 +11,10 @@ class EntryForm(forms.ModelForm):
     class Meta:
         model = Entry
         fields = [
-            'border_loss_cut', "border_profit_determination",
-            'reason_win_loss', 'memo'
+            "border_profit_determination",
+            'border_loss_cut',
+            'reason_win_loss',
+            'memo'
         ]
 
     def __init__(self, *args, **kwargs):

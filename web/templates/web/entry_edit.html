@@ -56,7 +56,7 @@
 				</tr>
 				<tr>
 					<th>Close Date</th>
-					<td>{{entry.date_close}}</td>
+					<td>{{entry.date_close | default_if_none:"-"}}</td>
 				</tr>
 				<tr>
 					<th>Remaining</th>
