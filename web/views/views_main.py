@@ -10,6 +10,7 @@ from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order, StockValueData
+from web.functions import asset_scraping
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -115,21 +116,27 @@ def entry_detail(request, entry_id):
         finally:
             return redirect('web:entry_detail', entry_id=entry_id)
     elif request.method == "GET":
+        # production以外ではmsg表示
         if not settings.ENVIRONMENT == "production":
             messages.info(request, msg)
         logger.info(msg)
         try:
+            # 各種情報取得
             entry = Entry.objects.get(pk=entry_id, user=request.user)
             orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock)
             edo = entry.date_open().date()
-            od = edo - relativedelta(days=7)
             edc = entry.date_close().date() if entry.is_closed else date.today()
+            # 7日のマージンでグラフ化範囲を指定
+            od = edo - relativedelta(days=7)
             cd = edc + relativedelta(days=7) if entry.is_closed else date.today()
             svds = StockValueData.objects.filter(stock=entry.stock, date__gt=od, date__lt=cd).order_by('date')
+            # グラフ化範囲のデータ数
             svds_count = svds.count()
+            # 日付とindex番号の紐付け
             date_list = dict()
             for i, svd in enumerate(svds):
                 date_list[svd.date.__str__()] = i
+            # 売買注文のグラフ化
             bos_detail = [None for i in range(svds_count)]
             sos_detail = [None for i in range(svds_count)]
             for o in entry.order_set.all():
@@ -157,6 +164,11 @@ def entry_detail(request, entry_id):
             "bos_detail": bos_detail,
             "sos_detail": sos_detail,
         }
+        # openの場合、現在情報を取得
+        if not entry.is_closed:
+            overview = asset_scraping.yf_detail(entry.stock.code)
+            if overview['status']:
+                output['overview'] = overview['data']
         logger.info(output)
         return TemplateResponse(request, "web/entry_detail.html", output)
 

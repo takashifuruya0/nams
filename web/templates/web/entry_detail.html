@@ -74,14 +74,35 @@
 				<tr>
 					<th>買付口数</th>
 					<th>買付平均</th>
+					{% if entry.is_closed %}
 					<th>売付口数</th>
 					<th>売付平均</th>
+					{% else %}
+					<th>現在価格</th>
+					<th>ステータス</th>
+					{% endif %}
 				</tr>
 				<tr>
 					<td>{{entry.num_buy}}</td>
 					<td>¥{{entry.val_buy | intcomma}}</td>
+					{% if entry.is_closed %}
 					<td>{{entry.num_sell}}</td>
 					<td>¥{{entry.val_sell | intcomma}}</td>
+					{% else %}
+					<td>¥{{overview.val | intcomma}}</td>
+					<td>
+						{%if overview.val < entry.border_loss_cut%}
+						<label class="badge badge-danger"><i class="fas fa-thumbs-down"></i> Better to Loss cut</label>
+						{%elif overview.val > entry.border_profit_determination%}
+						<label class="badge badge-success"><i class="fas fa-thumbs-up"></i> Good to Sell</label>
+						{%endif%}
+						{% if overview.val == overview.financial_data.年初来安値 %}
+						<label class="badge badge-danger"><i class="fas fa-thumbs-down"></i> Lowest in the year</label>
+						{% elif overview.val == overview.financial_data.年初来高値 %}
+						<label class="badge badge-success"><i class="fas fa-thumbs-up"></i> Highest in the year</label>
+						{%endif%}
+					</td>
+					{% endif %}
 				</tr>
 			</table>
 			<hr>

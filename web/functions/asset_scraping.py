@@ -62,7 +62,10 @@ def yf_profile(code, is_consolidated=True):
     res = list()
     # table取得
     try:
-        soup = BeautifulSoup(ret.content, "lxml")
+        if settings.ENVIRONMENT == "develop":
+            soup = BeautifulSoup(ret.content, "html5lib")
+        else:
+            soup = BeautifulSoup(ret.content, "lxml")
         table = soup.find('table', {'class': 'yjMt'})
         trs = table.findAll('tr')
     except Exception as e:
@@ -128,7 +131,10 @@ def yf_detail(code):
     res['code'] = code
     ret = requests.get(base_url, params={"code": str(code), })
     try:
-        soup = BeautifulSoup(ret.content, "lxml")
+        if settings.ENVIRONMENT == "develop":
+            soup = BeautifulSoup(ret.content, "html5lib")
+        else:
+            soup = BeautifulSoup(ret.content, "lxml")
         if len(str(code)) == 4:
             res['is_trust'] = False
             # 株
