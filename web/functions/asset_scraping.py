@@ -23,7 +23,7 @@ def kabuoji3(code):
     }
     ret = requests.get(base_url, headers=headers)
     try:
-        if not settings.ENVIRONMENT == "develop":
+        if settings.ENVIRONMENT == "develop":
             soup = BeautifulSoup(ret.content, "html5lib")
         else:
             soup = BeautifulSoup(ret.content, "lxml")
