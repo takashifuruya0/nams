@@ -7,7 +7,7 @@
 {% block body %}
 <div class="container-fluid">
 	<div class="row">
-		<div class="col-6">
+		<div class="col-12 col-sm-6">
 			<h4>
 				Entry Overview
 				{% include 'web/part/entry_type.html' %}
@@ -67,7 +67,8 @@
 				<i class="fas fa-backward"></i> Back
 			</a>
 		</div>
-		<div class="col-6">
+
+		<div class="col-12 col-sm-6">
 			<h4>Order Overview</h4>
 			<table class="table">
 				<tr>
@@ -120,6 +121,7 @@
 	<hr>
 	<div class="row">
 			<div class="col-12">
+				<h4>Chart</h4>
 				<canvas id="analysis" width="300" height="150"></canvas>
 			</div>
 		</div>
