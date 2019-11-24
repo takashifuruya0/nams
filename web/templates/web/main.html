@@ -88,13 +88,12 @@
 							<th>Date</th>
 							<th>Name</th>
 							<th>Args</th>
-							<th>Result</th>
 						</tr>
 						{% for task in tasks %}
 						<tr>
 							<td>
 								<a href="/admin/django_celery_results/taskresult/{{task.id}}">
-								{{task.task_id}}
+								{{task.task_id　|truncatechars:20}}
 								</a>
 							</td>
 							<td>
@@ -107,7 +106,6 @@
 							<td>{{task.date_done | date}}</td>
 							<td>{{task.task_name}}</td>
 							<td>{{task.task_args}}</td>
-							<td>{{task.result}}</td>
 						</tr>
 						{% endfor %}
 					</table>
