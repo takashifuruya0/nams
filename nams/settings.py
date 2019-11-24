@@ -142,6 +142,8 @@ MEDIA_ROOT = (
     os.path.join(BASE_DIR, 'document_nams')
 )
 
+ENVIRONMENT = "local"
+
 # Logging
 LOGGING = {
     'version': 1,

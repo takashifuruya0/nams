@@ -1,6 +1,7 @@
 # coding:utf-8
 import requests
 from bs4 import BeautifulSoup
+from django.conf import settings
 from datetime import datetime
 import logging
 logger = logging.getLogger("django")
@@ -22,7 +23,10 @@ def kabuoji3(code):
     }
     ret = requests.get(base_url, headers=headers)
     try:
-        soup = BeautifulSoup(ret.content, "lxml")
+        if not settings.ENVIRONMENT == "develop":
+            soup = BeautifulSoup(ret.content, "html5lib")
+        else:
+            soup = BeautifulSoup(ret.content, "lxml")
         stocktable = soup.find('table', {'class': 'stock_table stock_data_table'})
         records = stocktable.find_all('tr')
         records.pop(0)

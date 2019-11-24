@@ -33,8 +33,8 @@ def record_stock_value_data(code):
     list_added = list()
     # main process
     data = asset_scraping.kabuoji3(code)
+    stock = Stock.objects.get(code=code)
     if data['status']:
-        stock = Stock.objects.get(code=code)
         for d in data['data']:
             if StockValueData.objects.filter(stock=stock, date=d[0]).__len__() == 0:
                 counter += 1
