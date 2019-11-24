@@ -21,7 +21,8 @@ def main(request):
     msg = "Hello Django Test"
     entrys = Entry.objects.filter(user=request.user).order_by('-pk')[:10]
     logger.info(msg)
-    messages.info(request, msg)
+    if not settings.ENVIRONMENT == "production":
+        messages.info(request, msg)
     output = {
         "msg": msg,
         "user": request.user,
@@ -70,8 +71,9 @@ def entry_list(request):
             return redirect('web:entry_list')
     elif request.method == "GET":
         msg = request.GET
+        if not settings.ENVIRONMENT == "production":
+            messages.info(request, msg)
         logger.info(msg)
-        messages.info(request, msg)
         entrys = Entry.objects.filter(user=request.user).order_by('-pk')
         if request.GET.get("is_closed", False):
             entrys = entrys.filter(is_closed=True)
@@ -81,8 +83,6 @@ def entry_list(request):
             "msg": msg,
             "user": request.user,
             "entrys": entrys,
-            # "sum_profit": sum([e.profit() for e in entrys]),
-            # "count_won": sum([(1 if e.profit() > 0 else 0) for e in entrys]),
         }
         return TemplateResponse(request, "web/entry_list.html", output)
 
@@ -115,8 +115,9 @@ def entry_detail(request, entry_id):
         finally:
             return redirect('web:entry_detail', entry_id=entry_id)
     elif request.method == "GET":
+        if not settings.ENVIRONMENT == "production":
+            messages.info(request, msg)
         logger.info(msg)
-        messages.info(request, msg)
         try:
             entry = Entry.objects.get(pk=entry_id, user=request.user)
             orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock)
@@ -128,19 +129,23 @@ def entry_detail(request, entry_id):
             svds_count = svds.count()
             date_list = dict()
             for i, svd in enumerate(svds):
-                date_list[svd.date.__str__] = i
+                date_list[svd.date.__str__()] = i
             bos_detail = [None for i in range(svds_count)]
             sos_detail = [None for i in range(svds_count)]
             for o in entry.order_set.all():
-                order_date = o.datetime.date().__str__
-                if o.is_buy:
-                    bos_detail[date_list[order_date]] = o.val
-                else:
-                    sos_detail[date_list[order_date]] = o.val
+                order_date = str(o.datetime.date())
+                if order_date in list(date_list.keys()):
+                    if o.is_buy:
+                        bos_detail[date_list[order_date]] = o.val
+                    else:
+                        sos_detail[date_list[order_date]] = o.val
         except Exception as e:
             logger.error(e)
             messages.error(request, "Not found or not authorized to access it")
-            messages.add_message(request, messages.ERROR, e)
+            if not settings.ENVIRONMENT == "production":
+                messages.add_message(request, messages.ERROR, e.args)
+                messages.add_message(request, messages.ERROR, type(e))
+                messages.info(list(date_list[order_date].keys()))
             return redirect('web:main')
         output = {
             "msg": msg,
@@ -185,7 +190,8 @@ def entry_edit(request, entry_id):
 def order_detail(request, order_id):
     msg = "Hello Order Detail"
     logger.info(msg)
-    messages.info(request, msg)
+    if not settings.ENVIRONMENT == "production":
+        messages.info(request, msg)
     try:
         order = Order.objects.get(pk=order_id, user=request.user)
     except Exception as e:
