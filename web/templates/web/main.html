@@ -76,6 +76,8 @@
 						<dd>{{user}}</dd>
 						<dt>Mail Address: </dt>
 						<dd>{{user.email}}</dd>
+						<dt>Last Login</dt>
+						<dd>{{user.last_login | date}}</dd>
 					</dl>
 
 					{% if request.user.is_superuser %}
