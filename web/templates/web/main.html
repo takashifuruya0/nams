@@ -64,22 +64,65 @@
 	<hr>
 
 	<div class="row">
-		<div class="col-12 col-sm-6">
+		<div class="col-12">
 			<div class="card">
 				<div class="card-header bg-primary text-white">
 					<h3>User</h3>
 				</div>
 				<div class="card-body">
 					<h5 class="card-title">User info</h5>
-					<p class="card-text">{{user}}</p>
-					<p class="card-text">{{user.email}}</p>
+					<dl>
+						<dt>User: </dt>
+						<dd>{{user}}</dd>
+						<dt>Mail Address: </dt>
+						<dd>{{user.email}}</dd>
+					</dl>
+
+					{% if request.user.is_superuser %}
+					<hr>
+					<h4>Tasks</h4>
+					<table class="table table-responsive">
+						<tr>
+							<th>ID</th>
+							<th>Status</th>
+							<th>Date</th>
+							<th>Name</th>
+							<th>Args</th>
+							<th>Result</th>
+						</tr>
+						{% for task in tasks %}
+						<tr>
+							<td>
+								<a href="/admin/django_celery_results/taskresult/{{task.id}}">
+								{{task.task_id}}
+								</a>
+							</td>
+							<td>
+								{%if task.status == "SUCCESS"%}
+								<label class="badge badge-pill badge-success">SUCCESS</label>
+								{%else%}
+								<label class="badge badge-pill badge-danger">SUCCESS</label>
+								{%endif%}
+							</td>
+							<td>{{task.date_done | date}}</td>
+							<td>{{task.task_name}}</td>
+							<td>{{task.task_args}}</td>
+							<td>{{task.result}}</td>
+						</tr>
+						{% endfor %}
+					</table>
+					{% endif %}
 				</div>
 				<div class="card-footer">
 					{{msg}}
 				</div>
 			</div>
 		</div>
-		<div class="col-12 col-sm-6">
+	</div>
+
+	<hr>
+	<div class="row">
+		<div class="col-12">
 			<div class="card">
 				<div class="card-header bg-success text-white">
 					<h3>Data Studio</h3>

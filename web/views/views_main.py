@@ -11,6 +11,7 @@ from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order, StockValueData
 from web.functions import asset_scraping
+from django_celery_results.models import TaskResult
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -24,10 +25,13 @@ def main(request):
     logger.info(msg)
     if not settings.ENVIRONMENT == "production":
         messages.info(request, msg)
+    if request.user.is_superuser:
+        tasks = TaskResult.objects.all()[:5]
     output = {
         "msg": msg,
         "user": request.user,
         "entrys": entrys,
+        "tasks": tasks,
     }
     return TemplateResponse(request, "web/main.html", output)
 
