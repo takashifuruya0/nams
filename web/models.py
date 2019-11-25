@@ -149,7 +149,7 @@ class Order(models.Model):
         return "{}_{}_{}".format(bs, self.datetime, self.stock)
 
     def save(self, *args, **kwargs):
-        super.save(*args, **kwargs)
+        super().save(*args, **kwargs)
         if self.entry:
             self.entry.save()
 
