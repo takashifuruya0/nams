@@ -13,6 +13,7 @@ class Stock(models.Model):
     is_trust = models.BooleanField()
     market = models.CharField(max_length=30, blank=True, null=True)
     industry = models.CharField(max_length=30, blank=True, null=True)
+    fkmanage_id = models.IntegerField(null=True, blank=True, default=None)
 
     def __str__(self):
         return "({}) {}".format(self.code, self.name)
@@ -141,6 +142,7 @@ class Order(models.Model):
     commission = models.IntegerField()
     entry = models.ForeignKey(Entry, on_delete=models.CASCADE, null=True, blank=True)
     chart = models.ImageField(upload_to='images/', null=True, blank=True)
+    fkmanage_id = models.IntegerField(null=True, blank=True, default=None)
 
     def __str__(self):
         bs = "B" if self.is_buy else "S"

@@ -5,7 +5,7 @@ from .models import StockValueData, Order, Entry, ReasonWinLoss
 
 # Register your models here.
 class StockAdmin(admin.ModelAdmin):
-    list_display = ['pk', 'is_trust', 'code', 'name', 'market', 'industry', ]
+    list_display = ['pk', 'is_trust', 'code', 'name', 'market', 'industry', "fkmanage_id"]
     list_filter = ['market', 'industry', ]
     search_fields = ['is_trust', 'code', 'name', ]
 
@@ -24,7 +24,7 @@ class OrderAdmin(admin.ModelAdmin):
         "pk", "is_simulated", "is_buy", "is_nisa",
         "user", "datetime", "entry", "stock",
         "num", "val", "commission",
-        "chart", "chart_image"
+        "chart", "chart_image", "fkmanage_id",
     ]
     list_filter = [
         "user", "datetime", "is_simulated", "is_buy", "stock__is_trust",

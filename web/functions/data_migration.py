@@ -11,9 +11,14 @@ def stock():
         r = requests.get(url)
         data = r.json()
         for d in data['results']:
-            d.pop("pk")
             d['is_trust'] = False if len(d['code']) == 4 else True
-            Stock.objects.create(**d)
+            d['fkmanage_id'] = d['pk']
+            d.pop('pk')
+            s = Stock.objects.filter(code=d['code'])
+            if s.count() == 1:
+                s.update(**d)
+            else:
+                Stock.objects.create(**d)
         result = True
     except Exception as e:
         logger.error(e)
@@ -37,15 +42,28 @@ def order():
             d['is_simulated'] = False
             d['is_buy'] = True if d['order_type'] == "現物買" else False
             d['user'] = user
-            d.pop("pk")
+            d['fkmanage_id'] = d['pk']
+            d.pop('pk')
             d.pop('price')
             d.pop('order_type')
             d.pop('chart')
+            os = Order.objects.filter(
+                datetime=d['datetime'], stock=d['stock'],
+                val=d['val'], is_buy=d['is_buy'], user=d['user']
+            )
             logger.info("========d========")
             logger.info(d)
-            o = Order.objects.create(**d)
+            if os.exists():
+                o = os.filter(fkmanage_id=None).first()
+                if o:
+                    Order.objects.filter(pk=o.pk).update(**d)
+                    o = Order.objects.get(pk=o.pk)
+                else:
+                    continue
+            else:
+                o = Order.objects.create(**d)
             # entry
-            if not o.stock.is_trust and o.is_buy:
+            if not o.stock.is_trust and o.is_buy and not o.entry:
                 ed = {
                     "user": user,
                     "stock": stock,
@@ -79,11 +97,34 @@ def order():
     # }
 
 
-def init():
+def reason():
+    if ReasonWinLoss.objects.filter(is_win=True, reason="0_default").exists():
+        ReasonWinLoss.objects.create(is_win=True, reason="0_default")
+    if ReasonWinLoss.objects.filter(is_win=False, reason="0_default").exists():
+        ReasonWinLoss.objects.create(is_win=False, reason="0_default")
+    if ReasonWinLoss.objects.filter(is_win=True, reason="1_底値掴み"):
+        ReasonWinLoss.objects.create(is_win=True, reason="1_底値掴み")
+    if ReasonWinLoss.objects.filter(is_win=True, reason="2_売り逃げ"):
+        ReasonWinLoss.objects.create(is_win=True, reason="2_売り逃げ")
+    if ReasonWinLoss.objects.filter(is_win=True, reason="3_急騰"):
+        ReasonWinLoss.objects.create(is_win=True, reason="3_急騰")
+    if ReasonWinLoss.objects.filter(is_win=False, reason="1_高値掴み"):
+        ReasonWinLoss.objects.create(is_win=False, reason="1_高値掴み")
+    if ReasonWinLoss.objects.filter(is_win=False, reason="2_売り逃し"):
+        ReasonWinLoss.objects.create(is_win=False, reason="2_売り逃し")
+    if ReasonWinLoss.objects.filter(is_win=False, reason="3_急落"):
+        ReasonWinLoss.objects.create(is_win=False, reason="3_急落")
+    w = True
+    l = True
+    return w,l
+
+
+def init(delete=False):
     # delete
-    Order.objects.all().delete()
-    Entry.objects.all().delete()
-    Stock.objects.all().delete()
+    if delete:
+        Order.objects.all().delete()
+        Entry.objects.all().delete()
+        Stock.objects.all().delete()
     # stock
     s = stock()
     if s:
@@ -92,7 +133,6 @@ def init():
         o = order()
         if o:
             logger.info("Orders were migrated")
-            w = ReasonWinLoss.objects.create(is_win=True, reason="0_default")
-            l = ReasonWinLoss.objects.create(is_win=False, reason="0_default")
+            w, l = reason()
             if w and l:
                 logger.info("ReasonWinLoss were created")
