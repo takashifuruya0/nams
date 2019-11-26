@@ -98,21 +98,21 @@ def order():
 
 
 def reason():
-    if ReasonWinLoss.objects.filter(is_win=True, reason="0_default").exists():
+    if not ReasonWinLoss.objects.filter(is_win=True, reason="0_default").exists():
         ReasonWinLoss.objects.create(is_win=True, reason="0_default")
-    if ReasonWinLoss.objects.filter(is_win=False, reason="0_default").exists():
+    if not ReasonWinLoss.objects.filter(is_win=False, reason="0_default").exists():
         ReasonWinLoss.objects.create(is_win=False, reason="0_default")
-    if ReasonWinLoss.objects.filter(is_win=True, reason="1_底値掴み"):
+    if not ReasonWinLoss.objects.filter(is_win=True, reason="1_底値掴み").exists():
         ReasonWinLoss.objects.create(is_win=True, reason="1_底値掴み")
-    if ReasonWinLoss.objects.filter(is_win=True, reason="2_売り逃げ"):
+    if not ReasonWinLoss.objects.filter(is_win=True, reason="2_売り逃げ").exists():
         ReasonWinLoss.objects.create(is_win=True, reason="2_売り逃げ")
-    if ReasonWinLoss.objects.filter(is_win=True, reason="3_急騰"):
+    if not ReasonWinLoss.objects.filter(is_win=True, reason="3_急騰").exists():
         ReasonWinLoss.objects.create(is_win=True, reason="3_急騰")
-    if ReasonWinLoss.objects.filter(is_win=False, reason="1_高値掴み"):
+    if not ReasonWinLoss.objects.filter(is_win=False, reason="1_高値掴み").exists():
         ReasonWinLoss.objects.create(is_win=False, reason="1_高値掴み")
-    if ReasonWinLoss.objects.filter(is_win=False, reason="2_売り逃し"):
+    if not ReasonWinLoss.objects.filter(is_win=False, reason="2_売り逃し").exists():
         ReasonWinLoss.objects.create(is_win=False, reason="2_売り逃し")
-    if ReasonWinLoss.objects.filter(is_win=False, reason="3_急落"):
+    if not ReasonWinLoss.objects.filter(is_win=False, reason="3_急落").exists():
         ReasonWinLoss.objects.create(is_win=False, reason="3_急落")
     w = True
     l = True
