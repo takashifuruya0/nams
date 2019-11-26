@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
-from web.models import Entry, Order, StockValueData
+from web.models import Entry, Order, StockValueData, Stock
 from web.functions import asset_scraping
 from django_celery_results.models import TaskResult
 # logging
@@ -41,9 +41,12 @@ def test(request):
     msg = "Hello Django Test"
     logger.info(msg)
     messages.info(request, msg)
+    code = request.GET.get("code", 1357)
+    stock = Stock.objects.get(code=code)
     output = {
         "msg": msg,
         "user": request.user,
+        "stock": stock,
     }
     return TemplateResponse(request, "web/d3.html", output)
 

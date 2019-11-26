@@ -1,4 +1,4 @@
-$(function() {
+
 
   // ローソクチャートを表示する関数
   // candletypeには 1min 5min 1dayが選べる
@@ -6,7 +6,7 @@ $(function() {
 
     // グラフを挿入するエリア（card）のwidthを取得,（今回、heightはwidthの8/5に設定）
     let cardWidth = $(`.candlestick-${candleType}`).width();
-    let cardHeight = cardWidth / 8 * 5;
+    let cardHeight = cardWidth / 3;
 
     // グラフの領域とマージンを設定
     let margin = {top: 5, right: 5, bottom: 30, left: 80};
@@ -74,8 +74,9 @@ $(function() {
     let cAccessor = candlestick.accessor();
     let vAccessor = volume.accessor();
     // 最大180個のデータ数を表示する
-    if (data.length > 180) {
-      var first_data = data.length - 180;
+    max_length = 180
+    if (data.length > max_length) {
+      var first_data = data.length - max_length;
     } else {
       var first_data = 0;
     }
@@ -106,6 +107,10 @@ $(function() {
             .call(candlestick);
     // 移動平均線（データ数25）を追加する
     svg.append("g")
+            .attr("class", "sma ma5")
+            .datum(techan.indicator.sma().period(5)(data))
+            .call(sma);
+    svg.append("g")
             .attr("class", "sma ma25")
             .datum(techan.indicator.sma().period(25)(data))
             .call(sma);
@@ -134,9 +139,9 @@ $(function() {
 
   // APIから情報を取得し、内部でdisplayCandlestickを呼び出す関数
   // candleTypeには 1min 5min 1dayが選べる
-  function getAPIAndDisplayCandlestick(candleType) {
+  function getAPIAndDisplayCandlestick(candleType, code) {
     // コントローラーにリクエストを送る
-    let requestUrl = "/api/stock_value_data/?stock=3";
+    let requestUrl = "/api/stock_value_data/?stock="+code+"&limit=180";
     $.ajax({
       url: requestUrl,
       type: 'get',
@@ -170,7 +175,5 @@ $(function() {
       alert('error');
     });
   }
+//  getAPIAndDisplayCandlestick("1day", "5");
 
-  // 日足チャートを描画する
-  getAPIAndDisplayCandlestick("1day");
-});

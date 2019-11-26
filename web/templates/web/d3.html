@@ -8,11 +8,28 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-12">
-			<h5>Candle Stick</h5>
-			<div class="candlestick-1day"></div>
+			<div class="card">
+				<div class="card-header">
+					<h5>Candle Stick</h5>
+				</div>
+				<div class="card-body">
+					<p class="card-title">({{stock.code}}) {{stock.name}}</p>
+					<div class="candlestick-1day"></div>
+				</div>
+				<div class="card-footer">
+					ta
+				</div>
+			</div>
 		</div>
 	</div>
 </div>
 
 <script src="/document_nams/js/candlestick.js"></script>
+<script>
+	window.onload = function() {
+		getAPIAndDisplayCandlestick("1day", "{{stock.pk}}");
+	}
+</script>
+
+
 {% endblock %}
