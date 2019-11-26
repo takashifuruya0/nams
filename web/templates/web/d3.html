@@ -1,0 +1,18 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Entry Detail
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<h5>Candle Stick</h5>
+			<div class="candlestick-1day"></div>
+		</div>
+	</div>
+</div>
+
+<script src="/document_nams/js/candlestick.js"></script>
+{% endblock %}

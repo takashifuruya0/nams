@@ -45,7 +45,7 @@ def test(request):
         "msg": msg,
         "user": request.user,
     }
-    return TemplateResponse(request, "web/main.html", output)
+    return TemplateResponse(request, "web/d3.html", output)
 
 
 @login_required
