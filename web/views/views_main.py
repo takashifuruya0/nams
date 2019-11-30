@@ -141,9 +141,10 @@ def entry_detail(request, entry_id):
             orders_linked = entry.order_set.all().order_by('datetime')
             edo = entry.date_open().date()
             edc = entry.date_close().date() if entry.is_closed else date.today()
-            # 7日のマージンでグラフ化範囲を指定
-            od = edo - relativedelta(days=14)
-            cd = edc + relativedelta(days=14) if entry.is_closed else date.today()
+            # days日のマージンでグラフ化範囲を指定
+            days = 60
+            od = edo - relativedelta(days=days)
+            cd = edc + relativedelta(days=days) if entry.is_closed else date.today()
             svds = StockValueData.objects.filter(stock=entry.stock, date__gt=od, date__lt=cd).order_by('date')
             # グラフ化範囲のデータ数
             svds_count = svds.count()
@@ -178,6 +179,8 @@ def entry_detail(request, entry_id):
             "svds": svds,
             "bos_detail": bos_detail,
             "sos_detail": sos_detail,
+            "od": od,
+            "cd": cd,
         }
         # openの場合、現在情報を取得
         if not entry.is_closed:

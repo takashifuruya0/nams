@@ -33,7 +33,7 @@ function displayCandlestick(data, candleType, trades) {
     // x軸の定義
     var xAxis = d3.axisBottom()
         .scale(x)
-        .tickFormat(d3.timeFormat("%b")) // 日足なので、月(略称)表示にする
+        .tickFormat(d3.timeFormat("%m/%d")) // 日足なので、月(略称)表示にする
         .ticks(width/90); // 何データずつメモリ表示するか(レスポンシブ対応するためwidthによって変わるようにする)
 
     // y軸(レート)の定義
@@ -50,6 +50,11 @@ function displayCandlestick(data, candleType, trades) {
     let volume = techan.plot.volume()
             .xScale(x)
             .yScale(yVolume);
+
+    // 線
+    let close = techan.plot.close()
+            .xScale(x)
+            .yScale(y);
 
     // svgの挿入（既存のチャートを削除してから挿入）
     $(`.candlestick-${candleType}`).children("svg").remove();
@@ -104,6 +109,10 @@ function displayCandlestick(data, candleType, trades) {
             .attr("class", "sma ma25")
             .datum(techan.indicator.sma().period(25)(data))
             .call(sma);
+    svg.append("g")
+            .attr("class", "sma close")
+            .datum(data)
+            .call(close);
     // x軸を追加する
     svg.append("g")
             .attr("class", "x axis")

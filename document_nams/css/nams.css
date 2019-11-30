@@ -41,6 +41,11 @@ path.volume {
   stroke-dasharray: 3;
 }
 
+.close path.line {
+  stroke: #0000ff;
+  stroke-dasharray: 2;
+}
+
 .tradearrow path.tradearrow.buy {
     fill: #FF0000;
     stroke: #FFFFFF;
