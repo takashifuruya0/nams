@@ -201,3 +201,23 @@ class StockFinancialData(models.Model):
 
     def __str__(self):
         return "{}_{}".format(self.date, self.stock)
+
+
+class V_Entry(models.Model):
+    name = models.CharField(max_length=100)
+    is_closed = models.BooleanField()
+    date_open = models.DateTimeField()
+    date_close  = models.DateTimeField()
+    period = models.IntegerField()
+    buy_total = models.FloatField()
+    sell_total = models.FloatField()
+    commission = models.IntegerField()
+    profit = models.FloatField()
+    buy_num = models.IntegerField()
+    buy_price = models.FloatField()
+    sell_num = models.IntegerField()
+    sell_price = models.FloatField()
+
+    class Meta:
+        managed = False
+        db_table = "v_entry"
