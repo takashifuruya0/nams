@@ -207,7 +207,7 @@ class V_Entry(models.Model):
     name = models.CharField(max_length=100)
     is_closed = models.BooleanField()
     date_open = models.DateTimeField()
-    date_close  = models.DateTimeField()
+    date_close = models.DateTimeField()
     period = models.IntegerField()
     buy_total = models.FloatField()
     sell_total = models.FloatField()

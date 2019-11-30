@@ -9,7 +9,7 @@ from dateutil.relativedelta import relativedelta
 from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
-from web.models import Entry, Order, StockValueData, Stock
+from web.models import Entry, Order, StockValueData, Stock, AssetStatus
 from web.functions import asset_scraping
 from django_celery_results.models import TaskResult
 # logging
@@ -22,6 +22,7 @@ logger = logging.getLogger("django")
 def main(request):
     msg = "Hello Django Test"
     entrys = Entry.objects.filter(user=request.user).order_by('-pk')[:10]
+    astatus = AssetStatus.objects.filter(user=request.user).latest('date')
     logger.info(msg)
     if not settings.ENVIRONMENT == "production":
         messages.info(request, msg)
@@ -32,6 +33,7 @@ def main(request):
         "user": request.user,
         "entrys": entrys,
         "tasks": tasks,
+        "astatus": astatus,
     }
     return TemplateResponse(request, "web/main.html", output)
 

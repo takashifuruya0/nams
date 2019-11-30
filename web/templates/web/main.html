@@ -1,5 +1,5 @@
 {% extends "web/base.html" %}
-
+{% load humanize %}
 {% block title %}
     Main
 {% endblock %}
@@ -67,22 +67,40 @@
 		<div class="col-12">
 			<div class="card">
 				<div class="card-header bg-primary text-white">
-					<h3>User</h3>
+					<h3 >User</h3>
 				</div>
 				<div class="card-body">
-					<h5 class="card-title">User info</h5>
-					<dl>
-						<dt>User: </dt>
-						<dd>{{user}}</dd>
-						<dt>Mail Address: </dt>
-						<dd>{{user.email}}</dd>
-						<dt>Last Login</dt>
-						<dd>{{user.last_login | date}}</dd>
-					</dl>
+					<div class="row">
+						<div class="col-12 col-sm-6">
+							<h5 class="card-title">User info</h5>
+							<dl>
+								<dt>User: </dt>
+								<dd>{{user}}</dd>
+								<dt>Mail Address: </dt>
+								<dd>{{user.email}}</dd>
+								<dt>Last Login: </dt>
+								<dd>{{user.last_login | date}}</dd>
+							</dl>
+						</div>
+						<div class="col-12 col-sm-6">
+							<h5 class="card-title">Asset Status</h5>
+							<dl>
+								<dt>Total: </dt>
+								<dd>¥{{astatus.get_total | intcomma}}</dd>
+								<dt>Stock: </dt>
+								<dd>¥{{astatus.sum_stock | intcomma}}</dd>
+								<dt>Trust: </dt>
+								<dd>¥{{astatus.sum_trust | intcomma}}</dd>
+								<dt>Buying Power: </dt>
+								<dd>¥{{astatus.buying_power | intcomma}}</dd>
+							</dl>
+
+						</div>
+					</div>
 
 					{% if request.user.is_superuser %}
 					<hr>
-					<h4>Tasks</h4>
+					<h5 class="card-title">Tasks</h5>
 					<table class="table table-responsive">
 						<tr>
 							<th>ID</th>
@@ -100,9 +118,9 @@
 							</td>
 							<td>
 								{%if task.status == "SUCCESS"%}
-								<label class="badge badge-pill badge-success">SUCCESS</label>
+								<label class="badge badge-pill badge-success">{{task.status}}</label>
 								{%else%}
-								<label class="badge badge-pill badge-danger">SUCCESS</label>
+								<label class="badge badge-pill badge-danger">{{task.status}}</label>
 								{%endif%}
 							</td>
 							<td>{{task.date_done | date}}</td>
