@@ -27,7 +27,17 @@
 <script src="/document_nams/js/candlestick.js"></script>
 <script>
 	window.onload = function() {
-		getAPIAndDisplayCandlestick("1day", "{{stock.pk}}");
+		var trades = [
+			{% for o in orders %}
+			{
+				date: "{{o.datetime|date:"Y-m-d"}}",
+				type: "{%if o.is_buy%}buy{%else%}sell{%endif%}",
+				price: {{o.val}},
+				quantity: {{o.num}},
+			},
+      {% endfor %}
+    ];
+		getAPIAndDisplayCandlestick("1day", "{{stock.pk}}", trades);
 	}
 </script>
 

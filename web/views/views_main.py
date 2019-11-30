@@ -43,10 +43,14 @@ def test(request):
     messages.info(request, msg)
     code = request.GET.get("code", 1357)
     stock = Stock.objects.get(code=code)
+    orders = Order.objects.filter(stock__code=code).order_by('datetime')
+    svds = StockValueData.objects.filter(stock__code=code).order_by('date')
     output = {
         "msg": msg,
         "user": request.user,
         "stock": stock,
+        "orders": orders,
+        "svds": svds,
     }
     return TemplateResponse(request, "web/d3.html", output)
 

@@ -39,5 +39,17 @@ path.volume {
 .ma25 path.line {
   stroke: #0000cd;
   stroke-dasharray: 3;
-
 }
+
+.tradearrow path.tradearrow.buy {
+    fill: #0000FF;
+    stroke: #FFFFFF;
+    stroke-width: 1.5;
+}
+
+.tradearrow path.tradearrow.sell {
+    fill: #FF9900;
+    stroke: #FFFFFF;
+    stroke-width: 1.5;
+}
+

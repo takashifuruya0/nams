@@ -1,8 +1,6 @@
-
-
   // ローソクチャートを表示する関数
   // candletypeには 1min 5min 1dayが選べる
-  function displayCandlestick(data, candleType) {
+function displayCandlestick(data, candleType, trades) {
 
     // グラフを挿入するエリア（card）のwidthを取得,（今回、heightはwidthの8/5に設定）
     let cardWidth = $(`.candlestick-${candleType}`).width();
@@ -38,12 +36,6 @@
             .scale(x)
             .tickFormat(d3.timeFormat("%b")) // 日足なので、月(略称)表示にする
             .ticks(width/90); // 何データずつメモリ表示するか(レスポンシブ対応するためwidthによって変わるようにする)
-    // 分足チャートの場合x軸の定義
-    } else {
-      var xAxis = d3.axisBottom()
-            .scale(x)
-            .tickFormat(d3.timeFormat("%H:%M")) // 分足なので、時：分表示にする
-            .ticks(width/90); // 何データずつメモリ表示するか
     }
 
     // y軸(レート)の定義
@@ -135,22 +127,55 @@
             .attr("y", 15) // 位置調整
             .style("text-anchor", "end") // テキスト開始位置
             .text("価格 (円)");
-  }
 
-  // APIから情報を取得し、内部でdisplayCandlestickを呼び出す関数
-  // candleTypeには 1min 5min 1dayが選べる
-  function getAPIAndDisplayCandlestick(candleType, code) {
+    // ==============================
+    // trade arrow
+    // ==============================
+    var tradearrow = techan.plot.tradearrow()
+            .xScale(x)
+            .yScale(y)
+            .orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
+            .on("mouseenter", enter)
+            .on("mouseout", out);
+    trades = trades.slice(0, trades.length).map(function(d) {
+      return {
+          date: parseDate(d.date),
+          type: d.type,
+          price: d.price,
+          quantity: d.quantity
+      };
+    }).sort(function(a, b) { return d3.ascending(cAccessor.d(a), cAccessor.d(b)); });
+    alert(trades[1].date)
+    svg.append("g")
+                .attr("class", "tradearrow");
+    svg.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+
+    function enter(d) {
+        valueText.style("display", "inline");
+        refreshText(d);
+    }
+
+    function out() {
+        valueText.style("display", "none");
+    }
+}
+
+// APIから情報を取得し、内部でdisplayCandlestickを呼び出す関数
+// candleTypeには 1min 5min 1dayが選べる
+function getAPIAndDisplayCandlestick(candleType, code, trades) {
     // コントローラーにリクエストを送る
     let requestUrl = "/api/stock_value_data/?stock="+code+"&limit=180";
     $.ajax({
       url: requestUrl,
       type: 'get',
       dataType: 'json',
-      data: { candleType: candleType }
+      data: {
+        candleType: candleType,
+        trades: trades,
+      }
     })
     .done(function(json) {
       // ローソク足チャートに必要な情報を取り出す
-//      let row_data = json.data.candlestick[0].ohlcv
       let row_data = json.results
       // 配列dataに連想配列としてデータを入れる
       let data = [];
@@ -159,21 +184,19 @@
         let high = datum.val_high;
         let low = datum.val_low;
         let close = datum.val_close;
-        let volume = datum.val_turnover;
+        let volume = datum.turnover;
         let date = datum.date;
         let modifiedDatum = { Date: date, Open: open, High: high, Low: low, Close: close, Volume: volume };
         data.push(modifiedDatum);
-      });
+      })
       // 画面を読み込んだ時に発火する
-      displayCandlestick(data, candleType);
-      // 画面をリサイズした時に発火する
-      $(window).on("resize", function() {
-        displayCandlestick(data, candleType);
-      });
+      displayCandlestick(data, candleType, trades);
+//      // 画面をリサイズした時に発火する
+//      $(window).on("resize", function() {
+//        displayCandlestick(data, candleType, trades);
+//      });
     })
     .fail(function() {
       alert('error');
     });
-  }
-//  getAPIAndDisplayCandlestick("1day", "5");
-
+}
