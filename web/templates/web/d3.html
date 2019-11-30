@@ -37,7 +37,23 @@
 			},
       {% endfor %}
     ];
-		getAPIAndDisplayCandlestick("1day", "{{stock.pk}}", trades);
+    var data = [
+      {% for svd in svds %}
+      {
+        Date: "{{svd.date|date:"Y-m-d"}}",
+        High: {{svd.val_high}},
+        Low: {{svd.val_low}},
+        Open: {{svd.val_open}},
+        Close: {{svd.val_close}},
+        Volume: {{svd.turnover}},
+      },
+      {% endfor %}
+    ];
+		displayCandlestick(data, "1day", trades);
+		// 画面をリサイズした時に発火する
+		$(window).on("resize", function() {
+			displayCandlestick(data, "1day", trades);
+		});
 	}
 </script>
 

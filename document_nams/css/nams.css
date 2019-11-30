@@ -42,13 +42,13 @@ path.volume {
 }
 
 .tradearrow path.tradearrow.buy {
-    fill: #0000FF;
+    fill: #FF0000;
     stroke: #FFFFFF;
     stroke-width: 1.5;
 }
 
 .tradearrow path.tradearrow.sell {
-    fill: #FF9900;
+    fill: #0000FF;
     stroke: #FFFFFF;
     stroke-width: 1.5;
 }

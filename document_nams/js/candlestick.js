@@ -30,13 +30,11 @@ function displayCandlestick(data, candleType, trades) {
             .xScale(x)
             .yScale(y);
 
-    // 日足チャートの場合x軸の定義
-    if (candleType == "1day") {
-      var xAxis = d3.axisBottom()
-            .scale(x)
-            .tickFormat(d3.timeFormat("%b")) // 日足なので、月(略称)表示にする
-            .ticks(width/90); // 何データずつメモリ表示するか(レスポンシブ対応するためwidthによって変わるようにする)
-    }
+    // x軸の定義
+    var xAxis = d3.axisBottom()
+        .scale(x)
+        .tickFormat(d3.timeFormat("%b")) // 日足なので、月(略称)表示にする
+        .ticks(width/90); // 何データずつメモリ表示するか(レスポンシブ対応するためwidthによって変わるようにする)
 
     // y軸(レート)の定義
     let yAxis = d3.axisLeft()
@@ -131,24 +129,25 @@ function displayCandlestick(data, candleType, trades) {
     // ==============================
     // trade arrow
     // ==============================
-    var tradearrow = techan.plot.tradearrow()
-            .xScale(x)
-            .yScale(y)
-            .orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
-            .on("mouseenter", enter)
-            .on("mouseout", out);
-    trades = trades.slice(0, trades.length).map(function(d) {
-      return {
-          date: parseDate(d.date),
-          type: d.type,
-          price: d.price,
-          quantity: d.quantity
-      };
-    }).sort(function(a, b) { return d3.ascending(cAccessor.d(a), cAccessor.d(b)); });
-    alert(trades[1].date)
-    svg.append("g")
-                .attr("class", "tradearrow");
-    svg.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+    if (trades.length != 0) {
+        var tradearrow = techan.plot.tradearrow()
+                .xScale(x)
+                .yScale(y)
+                .orient(function(d) { return d.type.startsWith("buy") ? "up" : "down"; })
+                .on("mouseenter", enter)
+                .on("mouseout", out);
+        trades = trades.slice(0, trades.length).map(function(d) {
+          return {
+              date: parseDate(d.date),
+              type: d.type,
+              price: d.price,
+              quantity: d.quantity
+          };
+        }).sort(function(a, b) { return d3.ascending(cAccessor.d(a), cAccessor.d(b)); });
+        svg.append("g")
+                    .attr("class", "tradearrow");
+        svg.selectAll("g.tradearrow").datum(trades).call(tradearrow);
+    }
 
     function enter(d) {
         valueText.style("display", "inline");
@@ -160,6 +159,7 @@ function displayCandlestick(data, candleType, trades) {
     }
 }
 
+//---------------------------------------------------------------------------------------
 // APIから情報を取得し、内部でdisplayCandlestickを呼び出す関数
 // candleTypeには 1min 5min 1dayが選べる
 function getAPIAndDisplayCandlestick(candleType, code, trades) {
@@ -191,12 +191,9 @@ function getAPIAndDisplayCandlestick(candleType, code, trades) {
       })
       // 画面を読み込んだ時に発火する
       displayCandlestick(data, candleType, trades);
-//      // 画面をリサイズした時に発火する
-//      $(window).on("resize", function() {
-//        displayCandlestick(data, candleType, trades);
-//      });
     })
     .fail(function() {
       alert('error');
     });
 }
+

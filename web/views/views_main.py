@@ -43,8 +43,10 @@ def test(request):
     messages.info(request, msg)
     code = request.GET.get("code", 1357)
     stock = Stock.objects.get(code=code)
-    orders = Order.objects.filter(stock__code=code).order_by('datetime')
     svds = StockValueData.objects.filter(stock__code=code).order_by('date')
+    date_start = svds.first().date
+    date_end = svds.last().date
+    orders = Order.objects.filter(stock__code=code, datetime__lte=date_end, datetime__gte=date_start).order_by('datetime')
     output = {
         "msg": msg,
         "user": request.user,
@@ -63,7 +65,7 @@ def entry_list(request):
             with transaction.atomic():
                 # entryの統合
                 pks = request.POST.getlist('pk')
-                entrys = Entry.objects.filter(pk__in=pks)
+                entrys = Entry.objects.prefetch_related('order_set').filter(pk__in=pks)
                 if request.POST['post_type'] == "merge_entrys":
                     # 最初のEntry
                     first_entry = entrys.first()
@@ -86,7 +88,7 @@ def entry_list(request):
         if not settings.ENVIRONMENT == "production":
             messages.info(request, msg)
         logger.info(msg)
-        entrys = Entry.objects.filter(user=request.user).order_by('-pk')
+        entrys = Entry.objects.prefetch_related('order_set').select_related().filter(user=request.user).order_by('-pk')
         if request.GET.get("is_closed", False):
             entrys = entrys.filter(is_closed=True)
         elif request.GET.get("is_open", False):
@@ -133,13 +135,15 @@ def entry_detail(request, entry_id):
         logger.info(msg)
         try:
             # 各種情報取得
-            entry = Entry.objects.get(pk=entry_id, user=request.user)
+            entry = Entry.objects.prefetch_related('order_set')\
+                .select_related().get(pk=entry_id, user=request.user)
             orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock)
+            orders_linked = entry.order_set.all().order_by('datetime')
             edo = entry.date_open().date()
             edc = entry.date_close().date() if entry.is_closed else date.today()
             # 7日のマージンでグラフ化範囲を指定
-            od = edo - relativedelta(days=7)
-            cd = edc + relativedelta(days=7) if entry.is_closed else date.today()
+            od = edo - relativedelta(days=14)
+            cd = edc + relativedelta(days=14) if entry.is_closed else date.today()
             svds = StockValueData.objects.filter(stock=entry.stock, date__gt=od, date__lt=cd).order_by('date')
             # グラフ化範囲のデータ数
             svds_count = svds.count()
@@ -170,7 +174,7 @@ def entry_detail(request, entry_id):
             "user": request.user,
             "entry": entry,
             "orders_unlinked": orders_unlinked,
-            "orders_linked": entry.order_set.all().order_by('datetime'),
+            "orders_linked": orders_linked,
             "svds": svds,
             "bos_detail": bos_detail,
             "sos_detail": sos_detail,

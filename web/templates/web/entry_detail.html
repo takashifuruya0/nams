@@ -141,9 +141,43 @@
 
 	<hr>
 	<div class="row">
-			<div class="col-12">
-				<h4>Chart</h4>
-				<canvas id="analysis" width="300" height="150"></canvas>
+			<div class="col-8">
+				<div class="card">
+					<div class="card-header">
+						<h5>Candle Stick</h5>
+					</div>
+					<div class="card-body">
+						<p class="card-title">({{entry.stock.code}}) {{entry.stock.name}}</p>
+						<div class="candlestick-1day"></div>
+						<hr>
+						<p class="card-title">終値</p>
+						<canvas id="analysis" width="300" height="150"></canvas>
+					</div>
+					<div class="card-footer">
+					</div>
+				</div>
+			</div>
+			<div class="col-4">
+				<table class="table">
+					<tr>
+						<th></th>
+						<th>No.</th>
+						<th>Date</th>
+						<th>Type</th>
+						<th>Num</th>
+						<th>Val</th>
+					</tr>
+					{% for ol in orders_linked %}
+					<tr>
+						<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
+						<td>{{ol.pk}}</td>
+						<td>{{ol.datetime}}</td>
+						<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
+						<td>{{ol.num | intcomma}}</td>
+						<td>{{ol.val | intcomma}}</td>
+					</tr>
+					{%endfor%}
+				</table>
 			</div>
 		</div>
 </div>
@@ -151,4 +185,38 @@
 <!-- Modal new-record -->
 {% include 'web/modal/modal_link_orders.html' %}
 {% include 'web/part/chart.html' %}
+
+<script src="/document_nams/js/candlestick.js"></script>
+<script>
+	window.onload = function() {
+		var trades = [
+			{% for o in orders_linked %}
+			{
+				date: "{{o.datetime|date:"Y-m-d"}}",
+				type: "{%if o.is_buy%}buy{%else%}sell{%endif%}",
+				price: {{o.val}},
+				quantity: {{o.num}},
+			},
+      {% endfor %}
+    ];
+    var data = [
+      {% for svd in svds %}
+      {
+        Date: "{{svd.date|date:"Y-m-d"}}",
+        High: {{svd.val_high}},
+        Low: {{svd.val_low}},
+        Open: {{svd.val_open}},
+        Close: {{svd.val_close}},
+        Volume: {{svd.turnover}},
+      },
+      {% endfor %}
+    ];
+		displayCandlestick(data, "1day", trades);
+		// 画面をリサイズした時に発火する
+		$(window).on("resize", function() {
+			displayCandlestick(data, "1day", trades);
+		});
+	}
+</script>
+
 {% endblock %}
