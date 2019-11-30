@@ -47,7 +47,7 @@ def record_stock_value_data(code):
                     val_close=d[4],
                     turnover=d[5],
                 )
-                list_added.append(s.__dict__)
+                list_added.append(s.date.__str__())
         logger.info('StockValueData of {} are updated'.format(stock))
     result = {
         "counter": counter,

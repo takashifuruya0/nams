@@ -24,7 +24,7 @@ class OrderFilter(dfilters.FilterSet):
     stock = dfilters.ModelChoiceFilter(queryset=Stock.objects.all())
 
     class Meta:
-        fields = ("stock",)
+        fields = ("stock", "stock__code",)
         model = Order
 
 
@@ -32,7 +32,7 @@ class StockValueDataFilter(dfilters.FilterSet):
     stock = dfilters.ModelChoiceFilter(queryset=Stock.objects.all())
 
     class Meta:
-        fields = ('stock',)
+        fields = ("stock", "stock__code",)
         model = StockValueData
 
 
@@ -40,7 +40,7 @@ class StockFinancialDataFilter(dfilters.FilterSet):
     stock = dfilters.ModelChoiceFilter(queryset=Stock.objects.all())
 
     class Meta:
-        fields = ('stock',)
+        fields = ("stock", "stock__code",)
         model = StockFinancialData
 
 
@@ -48,7 +48,7 @@ class EntryFilter(dfilters.FilterSet):
     stock = dfilters.ModelChoiceFilter(queryset=Stock.objects.all())
 
     class Meta:
-        fields = ('stock',)
+        fields = ("stock", "stock__code",)
         model = Entry
 
 
@@ -60,7 +60,7 @@ class UserFilter(dfilters.FilterSet):
 
 # viewset
 class OrderViewSet(viewsets.ModelViewSet):
-    queryset = Order.objects.all().order_by('date')
+    queryset = Order.objects.all().order_by('datetime')
     serializer_class = OrderSerializer
     filter_class = OrderFilter
 
