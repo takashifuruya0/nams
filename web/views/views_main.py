@@ -21,7 +21,7 @@ logger = logging.getLogger("django")
 @login_required
 def main(request):
     msg = "Hello Django Test"
-    entrys = Entry.objects.filter(user=request.user).order_by('-pk')[:10]
+    entrys = Entry.objects.filter(user=request.user).order_by('-pk')[:5]
     astatus_list = AssetStatus.objects.filter(user=request.user)
     astatus = astatus_list.latest('date') if astatus_list.exists() else None
     logger.info(msg)

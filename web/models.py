@@ -171,6 +171,11 @@ class AssetStatus(models.Model):
     def get_total(self):
         return self.sum_other + self.sum_stock + self.sum_trust
 
+    def get_gp(self):
+        return self.get_total() - self.investment
+
+    def get_gpr(self):
+        return round((self.get_total() - self.investment)/self.investment * 100, 2)
 
 class StockFinancialData(models.Model):
     objects = None

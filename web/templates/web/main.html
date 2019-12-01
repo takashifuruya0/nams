@@ -13,9 +13,6 @@
 					<h3>Top</h3>
 		    </div>
 		    <div class="card-body">
-			    <a href="{%url 'web:entry_list'%}">
-						<h5 class="card-title">Entrys</h5>
-			    </a>
 			    <table class="table table-responsive">
 				    <thead>
 				      <tr>
@@ -57,6 +54,11 @@
 				    </tbody>
 			    </table>
 		    </div>
+		    <div class="card-footer">
+			    <a class="btn btn-secondary" href="{%url 'web:entry_list'%}">
+				    <i class="fas fa-list-alt"></i> Entrys
+			    </a>
+		    </div>
 	    </div>
     </div>
   </div>
@@ -83,23 +85,26 @@
 							</dl>
 						</div>
 						<div class="col-12 col-sm-6">
-							<h5 class="card-title">Asset Status</h5>
+							<h5 class="card-title">Asset Status ({{astatus.date |date}})</h5>
 							<dl>
 								<dt>Total: </dt>
-								<dd>¥{{astatus.get_total | intcomma}}</dd>
+								<dd>¥{{astatus.get_total |default:"-" |intcomma}}</dd>
 								<dt>Stock: </dt>
-								<dd>¥{{astatus.sum_stock | intcomma}}</dd>
+								<dd>¥{{astatus.sum_stock |default:"-" |intcomma}}</dd>
 								<dt>Trust: </dt>
-								<dd>¥{{astatus.sum_trust | intcomma}}</dd>
+								<dd>¥{{astatus.sum_trust |default:"-" |intcomma}}</dd>
 								<dt>Buying Power: </dt>
-								<dd>¥{{astatus.buying_power | intcomma}}</dd>
+								<dd>¥{{astatus.buying_power |default:"-" |intcomma}}</dd>
+								<dt>Investment: </dt>
+								<dd>¥{{astatus.investment |default:"-" |intcomma}}</dd>
+								<dt>Gross Profit: </dt>
+								<dd>¥{{astatus.get_gp |default:"-" |intcomma}} / {{astatus.get_gpr |default:"-" |intcomma}}%</dd>
 							</dl>
 
 						</div>
 					</div>
 
 					{% if request.user.is_superuser %}
-					<hr>
 					<h5 class="card-title">Tasks</h5>
 					<table class="table table-responsive">
 						<tr>
