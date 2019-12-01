@@ -22,7 +22,8 @@ logger = logging.getLogger("django")
 def main(request):
     msg = "Hello Django Test"
     entrys = Entry.objects.filter(user=request.user).order_by('-pk')[:10]
-    astatus = AssetStatus.objects.filter(user=request.user).latest('date')
+    astatus_list = AssetStatus.objects.filter(user=request.user)
+    astatus = astatus_list.latest('date') if astatus_list.exists() else None
     logger.info(msg)
     if not settings.ENVIRONMENT == "production":
         messages.info(request, msg)
