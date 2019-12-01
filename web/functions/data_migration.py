@@ -1,5 +1,6 @@
 from web.models import *
 import requests
+from datetime import datetime
 from django.contrib.auth.models import User
 import logging
 logger = logging.getLogger('django')
@@ -136,3 +137,30 @@ def init(delete=False):
             w, l = reason()
             if w and l:
                 logger.info("ReasonWinLoss were created")
+
+
+def astatus():
+    date_format = "%Y-%m-%d"
+    url = "https://www.fk-management.com/drm/asset/status/?limit=400"
+    user = User.objects.first()
+    r = requests.get(url)
+    if r.status_code == 200:
+        data = r.json()['results']
+        data_mapped = list(map(
+            lambda x:
+            {
+                "user": user,
+                "date": datetime.strptime(x['date'], date_format).date(),
+                "investment": x['investment'],
+                "sum_other": 0,
+                "sum_trust": x['other_value'],
+                "sum_stock": x['stocks_value'],
+                "buying_power": x['buying_power'],
+                "nisa_power": 1000000,
+            }, data))
+        astatus_list = list()
+        for dm in data_mapped:
+            astatus_list.append(AssetStatus(**dm))
+        result = AssetStatus.objects.bulk_create(astatus_list)
+    return result
+

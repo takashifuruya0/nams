@@ -1,5 +1,6 @@
 # nams/tasks/__init__.py
 from datetime import date
+from django.contrib.auth.models import User
 from ..celery import app
 from web.models import Stock, StockValueData, AssetStatus, StockFinancialData
 from web.functions import asset_scraping
@@ -68,10 +69,18 @@ def record_asset_status():
     :param: Null
     :return: True
     '''
-    asset_status = AssetStatus.objects.latest('date')
-    asset_status.pk = None
-    asset_status.date = date.today()
-    asset_status.save()
+    users = User.objects.all()
+    for u in users:
+        asset_status = AssetStatus.objects.filter(user=u)
+        if asset_status.exists():
+            logger.info("Started for {}".format(u.username))
+            asset_status = asset_status.latest('date')
+            asset_status.pk = None
+            asset_status.date = date.today()
+            asset_status.save()
+            logger.info("Done for {}".format(u.username))
+        else:
+            logger.info("Not found for {}".format(u.username))
     return True
 
 
