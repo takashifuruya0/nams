@@ -1,0 +1,66 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Order View
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<table class="table table-responsive">
+				<tr>
+					<th>No</th>
+					<td>{{order.id}}</td>
+				</tr>
+				<tr>
+					<th>Datetime</th>
+					<td>{{order.datetime}}</td>
+				</tr>
+				<tr>
+					<th>Type</th>
+					<td>
+						{%if order.is_buy%}
+						<label class="badge badge-danger">現物買</label>
+						{%else%}
+						<label class="badge badge-primary">現物売</label>
+						{%endif%}
+					</td>
+				</tr>
+				<tr>
+					<th>Num</th>
+					<td>{{order.num |intcomma}}</td>
+				</tr>
+				<tr>
+					<th>Val</th>
+					<td>¥{{order.val |intcomma}}</td>
+				</tr>
+				<tr>
+					<th>Commission</th>
+					<td>¥{{order.commission |intcomma}}</td>
+				</tr>
+				<tr>
+					<th>Entry</th>
+					<td>
+						{% if order.entry %}
+						<a href="{%url 'web:entry_detail' entry_id=order.entry.id%}">
+							{{order.entry}}
+						</a>
+						{%else%}-{%endif%}
+					</td>
+				</tr>
+				<tr>
+					<th>Chart</th>
+					<td>{{order.chart}}</td>
+				</tr>
+			</table>
+			<a class="btn btn-outline-info" href="{%url 'web:order_edit' order_id=order.pk%}">
+				<i class="fas fa-edit"></i> Edit
+			</a>
+			<a class="btn btn-outline-secondary" href="{%url 'web:order_list' %}">
+				<i class="fas fa-backward"></i> Back
+			</a>
+		</div>
+	</div>
+</div>
+{% endblock %}

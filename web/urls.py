@@ -1,19 +1,26 @@
 # coding:utf-8
-from django.conf.urls import url
-from web.views import views_main
+# from django.conf.urls import url
+from django.urls import include, path
+from web.views import views_main, views_entry, views_order, views_stock
+
 
 app_name = 'web'
 urlpatterns = [
     # dashboard
-    url(r'^$', views_main.main, name='main'),
+    path('', views_main.main, name='main'),
     # test
-    url(r'^test$', views_main.test, name='test'),
+    path('test', views_main.test, name='test'),
     # entry
-    url(r'^entry/$', views_main.entry_list, name='entry_list'),
-    url(r'^entry/(?P<entry_id>\d+)/$', views_main.entry_detail, name='entry_detail'),
-    url(r'^entry/(?P<entry_id>\d+)/edit$', views_main.entry_edit, name='entry_edit'),
+    path('entry/', views_entry.entry_list, name='entry_list'),
+    path('entry/<int:entry_id>/', views_entry.entry_detail, name='entry_detail'),
+    path('entry/<int:entry_id>/edit', views_entry.entry_edit, name='entry_edit'),
     # order
-    url(r'^order/(?P<order_id>\d+)/$', views_main.order_detail, name='order_detail'),
-    url(r'^order/(?P<order_id>\d+)/edit$', views_main.order_detail, name='order_edit'),
+    path('order/', views_order.order_list, name="order_list"),
+    path('order/<int:order_id>/', views_order.order_detail, name='order_detail'),
+    path('order/<int:order_id>/edit', views_order.order_edit, name='order_edit'),
+    # stock
+    path('stock/$', views_stock.stock_list, name="stock_list"),
+    path('stock/<stock_code>/', views_stock.stock_detail, name='stock_detail'),
+    path('stock/<stock_code>/edit', views_stock.stock_edit, name='stock_edit'),
 ]
 

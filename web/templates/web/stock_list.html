@@ -1,0 +1,42 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Stock List
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<table class="table">
+				<tr>
+					<th>Code</th>
+					<th>Name</th>
+					<th>Type</th>
+					<th>Industry</th>
+					<th>Market</th>
+				</tr>
+				{% for stock in stocks %}
+				<tr>
+					<td>
+						<a href="{%url 'web:stock_detail' stock_code=stock.code%}">
+							{{stock.code}}
+						</a>
+					</td>
+					<td>{{stock.name}}</td>
+					<td>
+						{%if stock.is_trust%}
+						<label class="badge badge-info">投資信託</label>
+						{%else%}
+						<label class="badge badge-success">株</label>
+						{%endif%}
+					</td>
+					<td>{{stock.industry}}</td>
+					<td>{{stock.market}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

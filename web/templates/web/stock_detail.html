@@ -1,0 +1,77 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Stock Detail
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12 col-sm-6">
+			<h4>Overview</h4>
+			<table class="table table-responsive">
+				<tr>
+					<th>Code</th>
+					<td>{{stock.code}}</td>
+				</tr>
+				<tr>
+					<th>Name</th>
+					<td>{{stock.name}}</td>
+				</tr>
+				<tr>
+					<th>Type</th>
+					<td>
+						{%if stock.is_trust%}
+						<label class="badge badge-info">投資信託</label>
+						{%else%}
+						<label class="badge badge-success">株</label>
+						{%endif%}
+					</td>
+				</tr>
+				<tr>
+					<th>Market</th>
+					<td>{{stock.market}}</td>
+				</tr>
+				<tr>
+					<th>Industry</th>
+					<td>{{stock.industry}}</td>
+				</tr>
+			</table>
+			<a class="btn btn-outline-secondary" href="{%url 'web:stock_list' %}">
+				<i class="fas fa-backward"></i> Back
+			</a>
+		</div>
+		<div class="col-12 col-sm-6">
+			<h4>Entry</h4>
+			<table class="table table-responsive">
+				<tr>
+					<th>No</th>
+					<th>Status</th>
+					<th>Open</th>
+					<th>Close</th>
+					<th>Profit</th>
+				</tr>
+				{% for e in stock.entry_set.all %}
+				<tr>
+					<td>
+						<a href="{%url 'web:entry_detail' entry_id=e.id %}">
+							{{e.id}}
+						</a>
+					</td>
+					<td>
+						{%if e.remaining == 0%}
+						Close
+						{%else%}
+						Open
+						{%endif%}
+					</td>
+					<td>{{e.date_open |date}}</td>
+					<td>{{e.date_close |date}}</td>
+					<td>¥{{e.profit |intcomma}}</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

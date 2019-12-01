@@ -15,7 +15,11 @@
 			<table class="table">
 				<tr>
 					<th>Stock</th>
-					<td>{{entry.stock}}</td>
+					<td>
+						<a href="{%url 'web:stock_detail' stock_code=entry.stock.code%}">
+							{{entry.stock}}
+						</a>
+					</td>
 					<th>Market / Industry</th>
 					<td>{{entry.stock.market}} / {{entry.stock.industry}} </td>
 				</tr>
@@ -135,9 +139,19 @@
 					{% for ol in orders_linked %}
 					<tr>
 						<td><input type="checkbox" name="pk" value="{{ol.pk}}"></td>
-						<td>{{ol.pk}}</td>
+						<td>
+							<a href="{%url 'web:order_detail' order_id=ol.id%}">
+								{{ol.pk}}
+							</a>
+						</td>
 						<td>{{ol.datetime}}</td>
-						<td>{%if ol.is_buy%}現物買{%else%}現物売{%endif%}</td>
+						<td>
+							{%if ol.is_buy%}
+							<label class="badge badge-danger">現物買</label>
+							{%else%}
+							<label class="badge badge-primary">現物売</label>
+							{%endif%}
+						</td>
 						<td>{{ol.num | intcomma}}</td>
 						<td>{{ol.val | intcomma}}</td>
 					</tr>

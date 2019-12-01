@@ -1,0 +1,52 @@
+{% extends "web/base.html" %}
+{% load humanize %}
+{% block title %}
+    Order List
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<table class="table">
+				<tr>
+					<th>No</th>
+					<th>Datetime</th>
+					<th>Type</th>
+					<th>Stock</th>
+					<th>Num</th>
+					<th>Val</th>
+					<th>Entry</th>
+				</tr>
+				{% for order in orders %}
+				<tr>
+					<td>
+						<a href="{%url 'web:order_detail' order_id=order.id%}">
+							{{order.pk}}
+						</a>
+					</td>
+					<td>{{order.datetime}}</td>
+					<td>
+						{%if order.is_buy%}
+						<label class="badge badge-danger">現物買</label>
+						{%else%}
+						<label class="badge badge-primary">現物売</label>
+						{%endif%}
+					</td>
+					<td>{{order.stock}}</td>
+					<td>{{order.num |intcomma}}</td>
+					<td>¥{{order.val |intcomma}}</td>
+					<td>
+						{% if order.entry %}
+						<a href="{%url 'web:entry_detail' entry_id=order.entry.id%}">
+							{{order.entry}}
+						</a>
+						{%else%}-{%endif%}
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+		</div>
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,27 @@
+{% extends "web/base.html" %}
+
+{% block title %}
+    Order View
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="col-12 col-sm-6">
+		<form method="post" action="">
+			<h4>
+				Order Edit
+			</h4>
+			<table>
+				{{form}}
+			</table>
+			{%csrf_token%}
+			<button type="submit" class="btn btn-outline-info">
+        <i class="fas fa-check"></i> Submit
+      </button>
+			<a href="{%url 'web:order_detail' order_id=order.pk%}" class="btn btn-outline-secondary">
+				<i class="fas fa-backward"></i> Back
+			</a>
+		</form>
+	</div>
+</div>
+{% endblock %}
