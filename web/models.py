@@ -114,6 +114,14 @@ class Entry(models.Model):
         else:
             return
 
+    def border_loss_cut_percent(self):
+        if self.border_loss_cut:
+            return round(self.border_loss_cut/self.val_buy()*100, 2)
+
+    def border_profit_determination_percent(self):
+        if self.border_profit_determination:
+            return round(self.border_profit_determination/self.val_buy()*100, 2)
+
     def save(self, *args, **kwargs):
         self.is_closed = True if self.remaining() == 0 else False
         if self.order_set.exists():

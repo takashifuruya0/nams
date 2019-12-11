@@ -3,7 +3,7 @@ from datetime import date
 from django.contrib.auth.models import User
 from ..celery import app
 from web.models import Stock, StockValueData, AssetStatus, StockFinancialData
-from web.functions import asset_scraping
+from web.functions import asset_scraping, data_migration
 import logging
 logger = logging.getLogger('django')
 # celery -A nams worker -c 2 -l info
@@ -99,4 +99,14 @@ def record_stock_financial_data(code):
             if StockFinancialData.objects.filter(stock=stock, date=d['決算発表日']).__len__() == 0:
                 sfd = StockFinancialData()
     result = {}
+    return result
+
+
+@app.task()
+def get_orders():
+    '''
+    get orders from fkmanage
+    :return:
+    '''
+    result = data_migration.order()
     return result

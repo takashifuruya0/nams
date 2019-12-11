@@ -33,13 +33,15 @@
 					<th>利確価格</th>
 					<td>
 						¥{{entry.border_profit_determination |default_if_none:"-" | intcomma }}
+						({% widthratio entry.border_profit_determination entry.val_buy 100.0 %}%)
 						{% if entry.border_profit_determination < entry.val_sell and entry.is_closed%}
 						<label class="badge bg-success"><i class="fas fa-thumbs-up"></i> Good</label>
 						{%endif%}
 					</td>
 					<th>損切価格</th>
 					<td>
-						¥{{entry.border_loss_cut |default_if_none:"-" | intcomma}}
+						¥{{entry.border_loss_cut |default_if_none:"-" | intcomma}}　
+						({% widthratio entry.border_loss_cut entry.val_buy 100.0 %}%)
 						{% if entry.border_loss_cut > entry.val_sell and entry.is_closed%}
 						<label class="badge bg-danger"><i class="fas fa-thumbs-down"></i> Bad</label>
 						{%endif%}
@@ -108,7 +110,7 @@
 					<td>{{entry.num_sell}}</td>
 					<td>¥{{entry.val_sell | intcomma}}</td>
 					{% else %}
-					<td>¥{{overview.val | intcomma}}</td>
+					<td>¥{{overview.val | intcomma}} ({% widthratio overview.val entry.val_buy 100.0 %}%)</td>
 					<td>
 						{%if overview.val < entry.border_loss_cut%}
 						<label class="badge badge-danger"><i class="fas fa-thumbs-down"></i> Better to Loss cut</label>
