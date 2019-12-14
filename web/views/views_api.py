@@ -81,7 +81,6 @@ def order(request):
                 o.commission = asset_lib.get_commission(o.num * o.value)
                 o.save()
                 logger.info("New Order is created: {}".format(o))
-
                 # order時のholding stocks, asset status の変更
                 res = asset_lib.order_process(o, request.user)
                 # message
@@ -99,8 +98,7 @@ def order(request):
                 }
                 data = {
                     "status": True,
-                    "data_list": [d, ],
-                    "length": 1,
+                    "data": d,
                 }
                 messages.success(request, "Done")
         except Exception as e:
