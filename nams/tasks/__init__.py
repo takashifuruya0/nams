@@ -2,7 +2,7 @@
 from datetime import date
 from django.contrib.auth.models import User
 from ..celery import app
-from web.models import Stock, StockValueData, AssetStatus, StockFinancialData
+from web.models import Stock, StockValueData, AssetStatus, StockFinancialData, Entry
 from web.functions import asset_scraping, data_migration
 import logging
 logger = logging.getLogger('django')
@@ -77,6 +77,12 @@ def record_asset_status():
             asset_status = asset_status.latest('date')
             asset_status.pk = None
             asset_status.date = date.today()
+            # stock_value
+            asset_status.sum_stock = 0
+            holdings = Entry.objects.select_related().filter(is_closed=False)
+            for h in holdings:
+                val_close = StockValueData.objects.filter(stock=h.stock).val_close
+                asset_status.sum_stock += (val_close * h.remaining())
             asset_status.save()
             logger.info("Done for {}".format(u.username))
         else:
