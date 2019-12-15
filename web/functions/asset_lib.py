@@ -19,14 +19,14 @@ def register_stock_financial_data(code):
         # 情報取得
         detail = asset_scraping.yf_detail(code)
         profiles = asset_scraping.yf_profile(code, is_consolidated=True)
-        if profiles['status'] and profiles[0]['決算期'] is None:
+        if profiles['status'] and profiles['data'][0]['決算期'] is None:
             # 単体の情報を取得
             profiles = asset_scraping.yf_profile(code, is_consolidated=False)
         # stock情報
         stock = Stock.objects.get(code=code)
         # 今年度を含めて３年分
         for i in range(3):
-            profile = profiles[i]
+            profile = profiles['data'][i]
             if not StockFinancialData.objects.filter(date=profile["決算発表日"], stock__code=code).exists():
                 data = {
                     "stock": stock,
@@ -49,12 +49,12 @@ def register_stock_financial_data(code):
                 }
                 # 今年度分はdetail情報を利用
                 if i == 0 and detail['status']:
-                    data['market_value'] = detail['data']["時価総額"]
-                    data['dividend_yield'] = detail['data']["配当利回り（会社予想）"]
-                    data['bps_f'] = detail['data']["BPS（実績）"]
-                    data['eps_f'] = detail['data']["EPS（会社予想）"]
-                    data['pbr_f'] = detail['data']["PBR（実績）"]
-                    data['per_f'] = detail['data']["PER（会社予想）"]
+                    data['market_value'] = detail['data']['financial_data']["時価総額"]
+                    data['dividend_yield'] = detail['data']['financial_data']["配当利回り（会社予想）"]
+                    data['bps_f'] = detail['data']['financial_data']["BPS（実績）"]
+                    data['eps_f'] = detail['data']['financial_data']["EPS（会社予想）"]
+                    data['pbr_f'] = detail['data']['financial_data']["PBR（実績）"]
+                    data['per_f'] = detail['data']['financial_data']["PER（会社予想）"]
                 # 保存
                 logger.debug(data)
                 sfd = StockFinancialData.objects.create(**data)
@@ -62,6 +62,7 @@ def register_stock_financial_data(code):
         # status=Trueに設定
         result['status'] = True
     except Exception as e:
+        print(e)
         logger.error(e)
         # status=Falseに設定
         result['status'] = False

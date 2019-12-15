@@ -24,7 +24,7 @@ def entry_list(request):
             with transaction.atomic():
                 # entryの統合
                 pks = request.POST.getlist('pk')
-                entrys = Entry.objects.prefetch_related('order_set').filter(pk__in=pks)
+                entrys = Entry.objects.prefetch_related('order_set').filter(pk__in=pks, user=request.user)
                 if request.POST['post_type'] == "merge_entrys":
                     # 最初のEntry
                     first_entry = entrys.first()
@@ -69,7 +69,7 @@ def entry_detail(request, entry_id):
             with transaction.atomic():
                 pks = request.POST.getlist('pk')
                 orders = Order.objects.filter(pk__in=pks)
-                entry = Entry.objects.get(pk=entry_id)
+                entry = Entry.objects.get(pk=entry_id,  user=request.user)
                 # link_orders
                 if request.POST['post_type'] == "link_orders":
                     orders.update(entry=entry)

@@ -73,5 +73,99 @@
 			</table>
 		</div>
 	</div>
+
+	<hr>
+	<div class="row">
+		<div class="col-12 col-sm-8">
+			<div class="card">
+				<div class="card-header">
+					<h5>Chart</h5>
+				</div>
+				<div class="card-body">
+					<p class="card-title">{{svds.first.date}} ~ {{svds.last.date}}</p>
+					<div class="candlestick-1day"></div>
+				</div>
+				<div class="card-footer">
+
+				</div>
+			</div>
+		</div>
+		<div class="col-12 col-sm-4">
+			<div class="card">
+				<div class="card-header">
+					<h5>Finance</h5>
+				</div>
+				<div class="card-body">
+					{%with sfd=sfds.last%}
+					<table class="table">
+						<tr>
+							<th>ROE</th>
+							<td>{{sfd.roe}}</td>
+						</tr>
+						<tr>
+							<th>ROA</th>
+							<td>{{sfd.roa}}</td>
+						</tr>
+						<tr>
+							<th>EPS</th>
+							<td>{{sfd.eps_f}}</td>
+						</tr>
+						<tr>
+							<th>PER</th>
+							<td>{{sfd.per_f}}</td>
+						</tr>
+						<tr>
+							<th>時価総額</th>
+							<td>{{sfd.market_value |intcomma}}</td>
+						</tr>
+						<tr>
+							<th>自己資本比率</th>
+							<td>{{sfd.equity_ratio}}%</td>
+						</tr>
+					</table>
+					{%endwith%}
+				</div>
+				<div class="card-footer">
+
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
+
+{% include 'web/part/chart.html' %}
+
+<script src="/document_nams/js/candlestick.js"></script>
+<script>
+	window.onload = function() {
+		var trades = [
+			{% for o in entry.order_set.all %}
+			{
+				date: "{{o.datetime|date:"Y-m-d"}}",
+				type: "{%if o.is_buy%}buy{%else%}sell{%endif%}",
+				price: {{o.val}},
+				quantity: {{o.num}},
+			},
+      {% endfor %}
+    ];
+    var data = [
+      {% for svd in svds %}
+      {
+        Date: "{{svd.date|date:"Y-m-d"}}",
+        High: {{svd.val_high}},
+        Low: {{svd.val_low}},
+        Open: {{svd.val_open}},
+        Close: {{svd.val_close}},
+        Volume: {{svd.turnover}},
+      },
+      {% endfor %}
+    ];
+		displayCandlestick(data, "1day", trades);
+		// 画面をリサイズした時に発火する
+		$(window).on("resize", function() {
+			displayCandlestick(data, "1day", trades);
+		});
+	}
+</script>
+
 {% endblock %}

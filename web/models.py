@@ -37,6 +37,7 @@ class ReasonWinLoss(models.Model):
     objects = None
     reason = models.CharField(max_length=40)
     is_win = models.BooleanField()
+    description = models.CharField(max_length=100, null=True, blank=True)
 
     def __str__(self):
         header = "W" if self.is_win else "L"
@@ -184,6 +185,7 @@ class AssetStatus(models.Model):
 
     def get_gpr(self):
         return round((self.get_total() - self.investment)/self.investment * 100, 2)
+
 
 class StockFinancialData(models.Model):
     objects = None
