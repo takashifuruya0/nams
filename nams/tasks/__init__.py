@@ -114,5 +114,6 @@ def get_orders():
     get orders from fkmanage
     :return:
     '''
+    data_migration.stock()
     result = data_migration.order()
     return result
