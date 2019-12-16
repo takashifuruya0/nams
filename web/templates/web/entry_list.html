@@ -8,14 +8,24 @@
 <div class="container-fluid">
 	<div class="row">
 		<div class="col-12">
-			<h4>Entrys</h4>
+			<h4><i class="fas fa-dungeon"></i> Entrys</h4>
 			<form action="" method="POST">
 				<a href="{%url 'web:entry_list'%}" class="btn btn-info">All</a>
-				<a href="?is_closed=true" class="btn btn-info">Closed</a>
-				<a href="?is_open=true" class="btn btn-info">Open</a>
-				<button type="submit" class="btn btn-outline-primary" name="post_type" value="merge_entrys">Merge</button>
-				<a href="" class="btn btn-outline-primary">Create</a>
-				<button type="submit" class="btn btn-outline-danger" name="post_type" value="delete_entrys">Delete</button>
+				<a href="?is_closed=true" class="btn btn-info">
+					Closed
+				</a>
+				<a href="?is_open=true" class="btn btn-info">
+					Open
+				</a>
+				<button type="submit" class="btn btn-outline-primary" name="post_type" value="merge_entrys">
+					<i class="fas fa-object-group"></i> Merge
+				</button>
+				<a href="" class="btn btn-outline-primary">
+					<i class="fas fa-plus"></i> Create
+				</a>
+				<button type="submit" class="btn btn-outline-danger" name="post_type" value="delete_entrys">
+					<i class="fas fa-trash-alt"></i> Delete
+				</button>
 				<table class="table">
 			    <thead>
 			      <tr>
