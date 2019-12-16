@@ -9,11 +9,36 @@ import logging
 logger = logging.getLogger('django')
 
 
+def register_stock(code):
+    result = {
+        "code": code,
+        "stock": None,
+        "status": False
+    }
+    if Stock.objects.filter(code=code).exists():
+        raise Exception('Already existing')
+    try:
+        yf_detail = asset_scraping.yf_detail(code)
+        if yf_detail['status']:
+            data = yf_detail['data']
+            data.pop('financial_data')
+            stock = Stock.objects.create(**data)
+            result['stock'] = stock
+            result['status'] = True
+            logger.info("New stock object of {}".format(stock))
+    except Exception as e:
+        print(e)
+        logger.error(e)
+        result['status'] = False
+    finally:
+        return result
+
+
 def register_stock_financial_data(code):
     result = {
         'code': code,
         'StockFinancialData': [],
-        'status': None,
+        'status': False,
     }
     try:
         # 情報取得

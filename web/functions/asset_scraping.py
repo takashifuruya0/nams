@@ -128,7 +128,8 @@ def yf_detail(code):
         key: None
         for key in ("code", "name", "val", "market", "industry", "financial_data", "is_trust")
     }
-    res['code'] = code
+    data['code'] = code
+    data['is_trust'] = False if len(str(code)) == 4 else True
     ret = requests.get(base_url, params={"code": str(code), })
     try:
         if settings.ENVIRONMENT == "develop":
