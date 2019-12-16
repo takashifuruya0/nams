@@ -2,6 +2,7 @@ from web.models import *
 import requests
 from datetime import datetime
 from django.contrib.auth.models import User
+from web.functions import asset_lib
 import logging
 logger = logging.getLogger('django')
 
@@ -63,6 +64,7 @@ def order():
                     continue
             else:
                 o = Order.objects.create(**d)
+                asset_lib.order_process(o, user)
             # entry
             if not o.stock.is_trust and o.is_buy and not o.entry:
                 ed = {
