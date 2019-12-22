@@ -178,7 +178,7 @@ class AssetStatus(models.Model):
         return "{}_{}".format(self.date, self.user)
 
     def get_total(self):
-        return self.sum_other + self.sum_stock + self.sum_trust
+        return self.sum_other + self.sum_stock + self.sum_trust + self.buying_power
 
     def get_gp(self):
         return self.get_total() - self.investment
