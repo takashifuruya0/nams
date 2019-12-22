@@ -143,7 +143,7 @@ def init(delete=False):
 
 def astatus():
     date_format = "%Y-%m-%d"
-    url = "https://www.fk-management.com/drm/asset/status/?limit=400"
+    url = "https://www.fk-management.com/drm/asset/status/?limit=600"
     user = User.objects.first()
     r = requests.get(url)
     if r.status_code == 200:

@@ -1,9 +1,7 @@
 from django.core.management.base import BaseCommand
-from web.models import Stock, StockValueData
-from web.functions import asset_scraping
+from web.functions import asset_lib
 import logging
 logger = logging.getLogger('django')
-from nams import tasks
 
 
 # BaseCommandを継承して作成
@@ -14,6 +12,6 @@ class Command(BaseCommand):
     # コマンドライン引数を指定します。(argparseモジュール https://docs.python.org/2.7/library/argparse.html)
     # コマンドが実行された際に呼ばれるメソッド
     def handle(self, *args, **options):
-        d = tasks.record_asset_status()
-        msg = "Task ID: {} nams.tasks.record_asset_status".format(d.id)
+        d = asset_lib.record_asset_status()
+        msg = "Result of record_asset_status: {}".format(d)
         self.stdout.write(self.style.SUCCESS(msg))

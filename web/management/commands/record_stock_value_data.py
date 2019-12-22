@@ -1,9 +1,8 @@
 from django.core.management.base import BaseCommand
-from web.models import Stock, StockValueData
-from web.functions import asset_scraping
+from web.models import Stock
+from web.functions import asset_lib
 import logging
 logger = logging.getLogger('django')
-from nams import tasks
 
 
 # BaseCommandを継承して作成
@@ -16,29 +15,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         stocks = Stock.objects.filter(is_trust=False)
         for s in stocks:
-            d = tasks.record_stock_value_data.delay(s.code)
-            msg = "Task ID: {} for {}:{}".format(d.id, s.code, s.name)
+            d = asset_lib.register_stock_value_data(s.code)
+            msg = "Result of record_stock_value_data for {}: {}".format(s, d)
             self.stdout.write(self.style.SUCCESS(msg))
-        # return d
-        # stocks = Stock.objects.filter(is_trust=False)
-        # for s in stocks:
-        #     try:
-        #         data = asset_scraping.kabuoji3(s.code)
-        #         StockValueData.objects.create(
-        #             stock=s,
-        #             date=data[0],
-        #             val_open=data[1],
-        #             val_high=data[2],
-        #             val_low=data[3],
-        #             val_close=data[4],
-        #             turnover=data[5],
-        #         )
-        #     except Exception as e:
-        #         self.stderr.write("{}".format(e))
-        #         logger.error("{}".format(e))
-        # if smsg != "":
-        #     self.stdout.write(self.style.SUCCESS(smsg))
-        #     logger.info(smsg)
-        # else:
-        #     self.stderr.write(emsg)
-        #     logger.error(emsg)

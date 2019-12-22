@@ -1,5 +1,5 @@
 from web.functions import asset_scraping
-from web.models import StockFinancialData, Stock, Entry, AssetStatus
+from web.models import StockFinancialData, Stock, Entry, AssetStatus, StockValueData
 from django.contrib.auth.models import User
 import requests
 from io import BytesIO
@@ -32,6 +32,45 @@ def register_stock(code):
         result['status'] = False
     finally:
         return result
+
+
+def register_stock_value_data(code):
+    '''
+    record_stock_value_data
+    :desc: kabuoji3からHLOCTを取得し、StockValueDataに格納
+    :param code: 銘柄コード
+    :return: StockValueDataの追加数等
+    '''
+    # for result
+    counter = 0
+    list_added = list()
+    # main process
+    data = asset_scraping.kabuoji3(code)
+    stock = Stock.objects.get(code=code)
+    if data['status']:
+        for d in data['data']:
+            if StockValueData.objects.filter(stock=stock, date=d[0]).__len__() == 0:
+                counter += 1
+                s = StockValueData.objects.create(
+                    stock=stock,
+                    date=d[0],
+                    val_open=d[1],
+                    val_high=d[2],
+                    val_low=d[3],
+                    val_close=d[4],
+                    turnover=d[5],
+                )
+                list_added.append(s.date.__str__())
+        logger.info('StockValueData of {} are updated'.format(stock))
+    result = {
+        "counter": counter,
+        "stock": {
+            "name": stock.name,
+            "code": stock.code,
+        },
+        "list": list_added,
+    }
+    return result
 
 
 def register_stock_financial_data(code):
@@ -210,3 +249,31 @@ def order_process(order, user=None):
         res['msg'] = "Process was failed"
     finally:
         return res
+
+
+def record_asset_status():
+    '''
+    record_asset_status
+    :desc: 最終日のレコードを取得して、日付を今日に変更して作成
+    :param: Null
+    :return: True
+    '''
+    users = User.objects.all()
+    for u in users:
+        asset_status = AssetStatus.objects.filter(user=u)
+        if asset_status.exists():
+            logger.info("Started for {}".format(u.username))
+            asset_status = asset_status.latest('date')
+            asset_status.pk = None
+            asset_status.date = date.today()
+            # stock_value
+            asset_status.sum_stock = 0
+            holdings = Entry.objects.select_related().filter(is_closed=False)
+            for h in holdings:
+                val_close = StockValueData.objects.filter(stock=h.stock).latest('date').val_close
+                asset_status.sum_stock += (val_close * h.remaining())
+            asset_status.save()
+            logger.info("Done for {}".format(u.username))
+        else:
+            logger.info("Not found for {}".format(u.username))
+    return True
