@@ -187,7 +187,7 @@ class EntryList(PaginationMixin, ListView):
         res = super().get_context_data(**kwargs)
         msg = self.request.GET
         if not settings.ENVIRONMENT == "production":
-            messages.info(messages.request, msg)
+            messages.info(self.request, msg)
         logger.info(msg)
         entrys = Entry.objects.prefetch_related('order_set').select_related().filter(user=self.request.user).order_by('-pk')
         if self.request.GET.get("is_closed", False):
