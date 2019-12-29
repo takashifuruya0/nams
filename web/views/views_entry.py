@@ -13,6 +13,7 @@ from web.functions import asset_scraping
 # list view, pagination
 from django.views.generic import ListView
 from pure_pagination.mixins import PaginationMixin
+from django.utils.decorators import method_decorator
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -177,11 +178,12 @@ def entry_edit(request, entry_id):
 
 
 # Create your views here.
+@method_decorator(login_required, name='dispatch')
 class EntryList(PaginationMixin, ListView):
     model = Entry
-    ordering = ['-date']
+    ordering = ['pk']
     paginate_by = 20
-    template_name = 'web/entry_list_@.html'
+    template_name = 'web/entry_list.html'
 
     def get_context_data(self, **kwargs):
         res = super().get_context_data(**kwargs)
@@ -189,22 +191,20 @@ class EntryList(PaginationMixin, ListView):
         if not settings.ENVIRONMENT == "production":
             messages.info(self.request, msg)
         logger.info(msg)
-        entrys = Entry.objects.prefetch_related('order_set').select_related().filter(user=self.request.user).order_by('-pk')
-        if self.request.GET.get("is_closed", False):
-            entrys = entrys.filter(is_closed=True)
-        elif self.request.GET.get("is_open", False):
-            entrys = entrys.filter(is_closed=False)
         res["msg"] = msg
         res["user"] = self.request.user
-        res["entrys"] = entrys
         return res
 
     def get_queryset(self):
-        queryset = Entry.objects.all()
+        queryset = Entry.objects.prefetch_related('order_set').select_related().filter(user=self.request.user).order_by('-pk')
+        if self.request.GET.get("is_closed", False):
+            queryset = queryset.filter(is_closed=True)
+        elif self.request.GET.get("is_open", False):
+            queryset = queryset.filter(is_closed=False)
         return queryset
 
+    @transaction.atomic
     def post(self, request, *args, **kwargs):
-        super().post()
         try:
             with transaction.atomic():
                 # entryの統合

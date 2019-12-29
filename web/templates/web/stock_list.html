@@ -16,7 +16,7 @@
 					<th>Industry</th>
 					<th>Market</th>
 				</tr>
-				{% for stock in stocks %}
+				{% for stock in object_list %}
 				<tr>
 					<td>
 						<a href="{%url 'web:stock_detail' stock_code=stock.code%}">
@@ -36,6 +36,7 @@
 				</tr>
 				{% endfor %}
 			</table>
+			{% include 'web/part/pagination.html' %}
 		</div>
 	</div>
 </div>

@@ -40,7 +40,7 @@
 			      </tr>
 			    </thead>
 			    <tbody>
-			      {% for entry in entrys %}
+			      {% for entry in object_list %}
 			      <tr>
 				      <td>
 					      <input type="checkbox" name="pk" value="{{entry.pk}}">
@@ -72,6 +72,7 @@
 			    </tbody>
 		    </table>
 				{% csrf_token %}
+				{% include 'web/part/pagination.html' %}
 			</form>
 		</div>
 	</div>

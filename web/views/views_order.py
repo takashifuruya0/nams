@@ -9,6 +9,10 @@ from web.forms import OrderForm
 from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order
+# list view, pagination
+from django.views.generic import ListView
+from pure_pagination.mixins import PaginationMixin
+from django.utils.decorators import method_decorator
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -83,3 +87,30 @@ def order_edit(request, order_id):
             "form": form,
         }
         return TemplateResponse(request, "web/order_edit.html", output)
+
+
+@method_decorator(login_required, name='dispatch')
+class OrderList(PaginationMixin, ListView):
+    model = Order
+    ordering = ['-datetime']
+    paginate_by = 20
+    template_name = 'web/order_list.html'
+
+    def get_context_data(self, **kwargs):
+        res = super().get_context_data(**kwargs)
+        return res
+
+    def get_queryset(self):
+        queryset = Order.objects.select_related().filter(user=self.request.user).order_by('-datetime')
+        return queryset
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                pass
+        except Exception as e:
+            logger.error(e)
+            messages.error(request, e)
+        finally:
+            return self.get(request, *args, **kwargs)

@@ -9,6 +9,10 @@ from web.forms import OrderForm
 from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order, Stock, StockValueData, StockFinancialData
+# list view, pagination
+from django.views.generic import ListView
+from pure_pagination.mixins import PaginationMixin
+from django.utils.decorators import method_decorator
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -73,3 +77,30 @@ def stock_edit(request, stock_code):
             "stock": stock,
         }
         return TemplateResponse(request, "web/stock_edit.html", output)
+
+
+@method_decorator(login_required, name='dispatch')
+class StockList(PaginationMixin, ListView):
+    model = Stock
+    ordering = ['code']
+    paginate_by = 20
+    template_name = 'web/stock_list.html'
+
+    def get_context_data(self, **kwargs):
+        res = super().get_context_data(**kwargs)
+        return res
+
+    def get_queryset(self):
+        queryset = Stock.objects.all().order_by('code')
+        return queryset
+
+    @transaction.atomic
+    def post(self, request, *args, **kwargs):
+        try:
+            with transaction.atomic():
+                pass
+        except Exception as e:
+            logger.error(e)
+            messages.error(request, e)
+        finally:
+            return self.get(request, *args, **kwargs)

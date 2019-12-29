@@ -18,7 +18,7 @@
 					<th>Val</th>
 					<th>Entry</th>
 				</tr>
-				{% for order in orders %}
+				{% for order in object_list %}
 				<tr>
 					<td>
 						<a href="{%url 'web:order_detail' order_id=order.id%}">
@@ -46,6 +46,7 @@
 				</tr>
 				{% endfor %}
 			</table>
+			{% include 'web/part/pagination.html' %}
 		</div>
 	</div>
 </div>
