@@ -103,7 +103,12 @@ class Entry(models.Model):
                     profit -= (o.num * o.val + o.commission)
                 else:
                     profit += (o.num * o.val - o.commission)
+        if profit > 0:
+            profit = round(profit * 0.8)
         return profit
+
+    def profit_pct(self):
+        return round(100 + self.profit() * 100 / self.val_buy() / self.num_buy(), 1)
 
     def date_open(self):
         return min([o.datetime for o in self.order_set.filter(is_buy=True)])

@@ -35,7 +35,7 @@
 						¥{{entry.border_profit_determination |default_if_none:"-" | intcomma }}
 						({% widthratio entry.border_profit_determination entry.val_buy 100.0 %}%)
 						{% if entry.border_profit_determination < entry.val_sell and entry.is_closed%}
-						<label class="badge bg-success"><i class="fas fa-thumbs-up"></i> Good</label>
+						<label class="badge badge-success"><i class="fas fa-thumbs-up"></i> Good</label>
 						{%endif%}
 					</td>
 					<th>損切価格</th>
@@ -43,7 +43,7 @@
 						¥{{entry.border_loss_cut |default_if_none:"-" | intcomma}}　
 						({% widthratio entry.border_loss_cut entry.val_buy 100.0 %}%)
 						{% if entry.border_loss_cut > entry.val_sell and entry.is_closed%}
-						<label class="badge bg-danger"><i class="fas fa-thumbs-down"></i> Bad</label>
+						<label class="badge badge-danger"><i class="fas fa-thumbs-down"></i> Bad</label>
 						{%endif%}
 					</td>
 				</tr>
@@ -51,7 +51,15 @@
 					<th>Remaining</th>
 					<td>{{entry.remaining | intcomma}}</td>
 					<th>Profit</th>
-					<td>¥{{entry.profit | intcomma}}</td>
+					<td>
+						¥{{entry.profit | intcomma}}
+						({{entry.profit_pct}}%)
+						{% if entry.profit > 0 %}
+						<label class="badge badge-success"><i class="fas fa-thumbs-up"></i> Good</label>
+						{% else %}
+						<label class="badge badge-danger"><i class="fas fa-thumbs-down"></i> Bad</label>
+						{% endif %}
+					</td>
 				</tr>
 				<tr>
 					<th>Reason</th>
