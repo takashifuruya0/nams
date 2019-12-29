@@ -1,0 +1,109 @@
+{% extends "web/base.html" %}
+{% load humanize%}
+{% block title %}
+    Entry List
+{% endblock %}
+
+{% block body %}
+<div class="container-fluid">
+	<div class="row">
+		<div class="col-12">
+			<h4><i class="fas fa-dungeon"></i> Entrys</h4>
+			<form action="" method="POST">
+				<a href="{%url 'web:entry_list'%}" class="btn btn-info">All</a>
+				<a href="?is_closed=true" class="btn btn-info">
+					Closed
+				</a>
+				<a href="?is_open=true" class="btn btn-info">
+					Open
+				</a>
+				<button type="submit" class="btn btn-outline-primary" name="post_type" value="merge_entrys">
+					<i class="fas fa-object-group"></i> Merge
+				</button>
+				<a href="" class="btn btn-outline-primary">
+					<i class="fas fa-plus"></i> Create
+				</a>
+				<button type="submit" class="btn btn-outline-danger" name="post_type" value="delete_entrys">
+					<i class="fas fa-trash-alt"></i> Delete
+				</button>
+				<table class="table">
+			    <thead>
+			      <tr>
+				      <th></th>
+				      <th>No.</th>
+				      <th>Stock</th>
+				      <th>Status</th>
+				      <th>Open</th>
+				      <th>Close</th>
+				      <th>Profit</th>
+							<th>Remaining</th>
+			      </tr>
+			    </thead>
+			    <tbody>
+			      {% for entry in entrys %}
+			      <tr>
+				      <td>
+					      <input type="checkbox" name="pk" value="{{entry.pk}}">
+				      </td>
+				      <td>
+					      <a href="{% url 'web:entry_detail' entry_id=entry.pk %}">{{entry.pk}}</a>
+				      </td>
+			        <td>{{entry.stock}}</td>
+				      <td>
+					      <h5>
+					      {{entry.num_linked_orders}}
+					      {%if entry.is_closed%}
+						      {%if entry.profit > 0 %}
+						      <span class="badge bg-large bg-success">Win</span>
+						      {%else%}
+						      <span class="badge bg-danger">Lose</span>
+						      {%endif%}
+					      {%else%}
+					        <span class="badge">Open</span>
+					      {%endif%}
+					      </h5>
+				      </td>
+				      <td>{{entry.date_open}}</td>
+				      <td>{{entry.date_close}}</td>
+				      <td>¥{{entry.profit | intcomma}}</td>
+				      <td>{{entry.remaining | intcomma}}</td>
+			      </tr>
+			      {% endfor %}
+			    </tbody>
+		    </table>
+				{% csrf_token %}
+			</form>
+		</div>
+		{% if is_paginated %}
+	  <ul class="pagination">
+	      {% if page_obj.has_previous %}
+	        <li><a class="page-link text-primary d-inline-block" href="?{{ page_obj.previous_page_number.querystring }}">前</a></li>
+	      {% else %}
+	        <li class="disabled"><div class="page-link text-secondary d-inline-block disabled" href="#">前</div></li>
+	      {% endif %}
+
+	      {% for link_page in page_obj.pages %}
+	        {% if link_page %}
+	          {% if link_page == page_obj.number %}
+	            <li class="disabled"><div class="page-link text-secondary d-inline-block disabled" href="#">{{ link_page }}</div></li>
+	          {% else %}
+	            <li><a class="page-link text-primary d-inline-block" href="?{{ link_page.querystring  }}">{{ link_page }}</a></li>
+	          {% endif %}
+	        {% else %}
+	          <li class="disabled"><a class="page-link text-secondary d-inline-block text-muted" href="#">・・・</a></li>
+	        {% endif %}
+	      {% endfor %}
+
+	      {% if page_obj.has_next %}
+	        <li><a class="page-link text-primary d-inline-block" href="?{{ page_obj.next_page_number.querystring }}">次</a></li>
+	      {% else %}
+	        <li class="disabled"><div class="page-link text-secondary d-inline-block disabled" href="#">次</div></li>
+	      {% endif %}
+	      <li class="p-md-2">
+	        {{ page_obj.paginator.num_pages }} 頁中 {{ page_obj.number }} 頁目を表示
+	      </li>
+	  </ul>
+		{% endif %}
+	</div>
+</div>
+{% endblock %}

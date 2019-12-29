@@ -10,6 +10,9 @@ from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order, StockValueData
 from web.functions import asset_scraping
+# list view, pagination
+from django.views.generic import ListView
+from pure_pagination.mixins import PaginationMixin
 # logging
 import logging
 logger = logging.getLogger("django")
@@ -171,3 +174,56 @@ def entry_edit(request, entry_id):
             "form": form
         }
         return TemplateResponse(request, "web/entry_edit.html", output)
+
+
+# Create your views here.
+class EntryList(PaginationMixin, ListView):
+    model = Entry
+    ordering = ['-date']
+    paginate_by = 20
+    template_name = 'web/entry_list_@.html'
+
+    def get_context_data(self, **kwargs):
+        res = super().get_context_data(**kwargs)
+        msg = self.request.GET
+        if not settings.ENVIRONMENT == "production":
+            messages.info(messages.request, msg)
+        logger.info(msg)
+        entrys = Entry.objects.prefetch_related('order_set').select_related().filter(user=self.request.user).order_by('-pk')
+        if self.request.GET.get("is_closed", False):
+            entrys = entrys.filter(is_closed=True)
+        elif self.request.GET.get("is_open", False):
+            entrys = entrys.filter(is_closed=False)
+        res["msg"] = msg
+        res["user"] = self.request.user
+        res["entrys"] = entrys
+        return res
+
+    def get_queryset(self):
+        queryset = Entry.objects.all()
+        return queryset
+
+    def post(self, request, *args, **kwargs):
+        super().post()
+        try:
+            with transaction.atomic():
+                # entryの統合
+                pks = request.POST.getlist('pk')
+                entrys = Entry.objects.prefetch_related('order_set').filter(pk__in=pks, user=request.user)
+                if request.POST['post_type'] == "merge_entrys":
+                    # 最初のEntry
+                    first_entry = entrys.first()
+                    for entry in entrys:
+                        if not entry == first_entry:
+                            entry.order_set.all().update(entry=first_entry)
+                        if entry.remaining() == 0:
+                            entry.delete()
+                        else:
+                            entry.save()
+                    msg = "Entrys {} are merged to Entry {}".format(pks, first_entry.pk)
+                    messages.success(request, msg)
+        except Exception as e:
+            logger.error(e)
+            messages.error(request, e)
+        finally:
+            return self.get(request, *args, **kwargs)
