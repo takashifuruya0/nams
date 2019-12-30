@@ -100,7 +100,7 @@ def entry_detail(request, entry_id):
             # 各種情報取得
             entry = Entry.objects.prefetch_related('order_set')\
                 .select_related().get(pk=entry_id, user=request.user)
-            orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock)
+            orders_unlinked = Order.objects.filter(entry=None, stock=entry.stock).order_by('datetime')
             orders_linked = entry.order_set.all().order_by('datetime')
             edo = entry.date_open().date()
             edc = entry.date_close().date() if entry.is_closed else date.today()
