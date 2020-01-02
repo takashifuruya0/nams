@@ -122,9 +122,9 @@ def entry_detail(request, entry_id):
                 order_date = str(o.datetime.date())
                 if order_date in list(date_list.keys()):
                     if o.is_buy:
-                        bos_detail[date_list[order_date]] = o.val
+                        bos_detail[date_list[order_date]] = o.val*10000 if entry.stock.is_trust else o.val
                     else:
-                        sos_detail[date_list[order_date]] = o.val
+                        sos_detail[date_list[order_date]] = o.val*10000 if entry.stock.is_trust else o.val
         except Exception as e:
             logger.error(e)
             messages.error(request, "Not found or not authorized to access it")

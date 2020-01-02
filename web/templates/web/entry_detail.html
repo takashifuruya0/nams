@@ -113,7 +113,13 @@
 				</tr>
 				<tr>
 					<td>{{entry.num_buy}}</td>
-					<td>¥{{entry.val_buy | intcomma}}</td>
+					<td>
+						{% if entry.stock.is_trust %}
+						¥{{entry.val_buy |floatformat:4 |intcomma}}
+						{% else %}
+						¥{{entry.val_buy |intcomma}}
+						{% endif %}
+					</td>
 					{% if entry.is_closed %}
 					<td>{{entry.num_sell}}</td>
 					<td>¥{{entry.val_sell | intcomma}}</td>
@@ -190,7 +196,7 @@
 			{
 				date: "{{o.datetime|date:"Y-m-d"}}",
 				type: "{%if o.is_buy%}buy{%else%}sell{%endif%}",
-				price: {{o.val}},
+				price: {%if o.stock.is_trust%}100{{o.val}}{%else%}{{o.val}}{%endif%},
 				quantity: {{o.num}},
 			},
       {% endfor %}

@@ -3,8 +3,9 @@ from web.models import StockFinancialData, Stock, Entry, AssetStatus, StockValue
 from django.contrib.auth.models import User
 import requests
 from io import BytesIO
+import csv
 from django.core import files
-from datetime import date
+from datetime import date, datetime
 import logging
 logger = logging.getLogger('django')
 
@@ -277,3 +278,63 @@ def record_asset_status():
         else:
             logger.info("Not found for {}".format(u.username))
     return True
+
+
+def import_trust_0(path, stock):
+    '''
+    (291113C) ニッセイ外国株式インデックスファンド　向け
+    https://www.nam.co.jp/fundinfo/data/csv.php?fund_code=121332
+    日付	ファンド名	基準価額	税引前分配金再投資基準価額	純資産総額	前日比
+    '''
+    datelist = [svd.date for svd in StockValueData.objects.filter(stock=stock)]
+    try:
+        with open(path, encoding="shift-jis") as f:
+            csv_line = csv.reader(f)
+            svds = list()
+            header = next(csv_line)
+            for d in csv_line:
+                if not datetime.strptime(d[0], "%Y年%m月%d日").date() in datelist:
+                    svd = StockValueData(
+                        stock=stock,
+                        date=datetime.strptime(d[0], "%Y年%m月%d日").date(),
+                        val_high=d[2],
+                        val_low=d[2],
+                        val_open=d[2],
+                        val_close=d[2],
+                        turnover=d[4][1:]
+                    )
+                    svds.append(svd)
+            StockValueData.objects.bulk_create(svds)
+            logger.info("{}のsvdを{}件作成しました".format(stock.name, len(svds)))
+    except Exception as e:
+        print(e.args)
+
+
+def import_trust_1(path, stock):
+    '''
+    (64317081) SMTJ-REITインデックス･オープン
+    https://www.smtam.jp/chart_data/140837/140837.csv
+    基準日	基準価額	分配金	純資産総額
+    '''
+    datelist = [svd.date for svd in StockValueData.objects.filter(stock=stock)]
+    try:
+        with open(path) as f:
+            csv_line = csv.reader(f)
+            svds = list()
+            header = next(csv_line)
+            for d in csv_line:
+                if not datetime.strptime(d[0], "%Y/%m/%d").date() in datelist:
+                    svd = StockValueData(
+                        stock=stock,
+                        date=datetime.strptime(d[0], "%Y/%m/%d").date(),
+                        val_high=d[1],
+                        val_low=d[1],
+                        val_open=d[1],
+                        val_close=d[1],
+                        turnover=float(d[3])*100000000
+                    )
+                    svds.append(svd)
+            StockValueData.objects.bulk_create(svds)
+            logger.info("{}のsvdを{}件作成しました".format(stock.name, len(svds)))
+    except Exception as e:
+        print(e.args)
