@@ -2,6 +2,7 @@ from django.db import models
 from datetime import date, datetime
 from django.contrib.auth.models import User
 from django.db.models import Sum, Avg
+from web.functions import asset_scraping
 # from django.utils import timezone
 # Create your models here.
 
@@ -96,14 +97,17 @@ class Entry(models.Model):
 
     def profit(self):
         profit = 0
-        if self.is_closed:
-            orders = self.order_set.all()
-            for o in orders:
-                if o.is_buy:
-                    profit -= (o.num * o.val + o.commission)
-                else:
-                    profit += (o.num * o.val - o.commission)
-        if profit > 0:
+        orders = self.order_set.all()
+        for o in orders:
+            if o.is_buy:
+                profit -= (o.num * o.val + o.commission)
+            else:
+                profit += (o.num * o.val - o.commission)
+        if not self.is_closed:
+            data = asset_scraping.yf_detail(self.stock.code)
+            if data['status']:
+                profit += data['data']['val'] * self.remaining()
+        if profit > 0 and not self.is_nisa:
             profit = round(profit * 0.8)
         return profit
 

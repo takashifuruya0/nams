@@ -35,7 +35,13 @@
 				</tr>
 				<tr>
 					<td>{{entry.num_buy}}</td>
-					<td>¥{{entry.val_buy | intcomma}}</td>
+					<td>
+						{% if entry.stock.is_trust %}
+						¥{{entry.val_buy |floatformat:4 |intcomma}}
+						{% else %}
+						¥{{entry.val_buy |intcomma}}
+						{% endif %}
+					</td>
 					<td>{{entry.num_sell}}</td>
 					<td>¥{{entry.val_sell | intcomma}}</td>
 				</tr>

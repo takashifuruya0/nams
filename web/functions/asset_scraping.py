@@ -172,11 +172,12 @@ def yf_detail(code):
             res['msg'] = "Success"
             res['status'] = True
         else:
-            res['is_trust'] = True
+            data['is_trust'] = True
             # 投資信託
-            res['val'] = float(soup.find('span', {'class': "_3BGK5SVf"}).text.replace(",", ""))/10000
-            res['name'] = soup.find('span', {'class': "cj4y2d7f"}).text
-            res['industry'] = "投資信託"
+            data['val'] = float(soup.find('span', {'class': "_3BGK5SVf"}).text.replace(",", ""))/10000
+            data['name'] = soup.find('span', {'class': "cj4y2d7f"}).text
+            data['industry'] = "投資信託"
+            res['data'] = data
             # 完了
             res['msg'] = "Success"
             res['status'] = True

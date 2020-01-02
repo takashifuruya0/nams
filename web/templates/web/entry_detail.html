@@ -21,7 +21,7 @@
 						</a>
 					</td>
 					<th>Market / Industry</th>
-					<td>{{entry.stock.market}} / {{entry.stock.industry}} </td>
+					<td>{{entry.stock.market |default:"-"}} / {{entry.stock.industry |default:"-"}} </td>
 				</tr>
 				<tr>
 					<th>Open Date</th>
@@ -52,7 +52,7 @@
 					<td>{{entry.remaining | intcomma}}</td>
 					<th>Profit</th>
 					<td>
-						¥{{entry.profit | intcomma}}
+						¥{{entry.profit |floatformat:0 |intcomma}}
 						({{entry.profit_pct}}%)
 						{% if entry.profit > 0 %}
 						<label class="badge badge-success"><i class="fas fa-thumbs-up"></i> Good</label>
