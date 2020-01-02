@@ -361,10 +361,10 @@ def register_stock_value_data_alt(code):
                 s = StockValueData.objects.create(
                     stock=stock,
                     date=today,
-                    val_open=data['data']['val'],
-                    val_high=data['data']['val'],
-                    val_low=data['data']['val'],
-                    val_close=data['data']['val'],
+                    val_open=data['data']['val']*10000,
+                    val_high=data['data']['val']*10000,
+                    val_low=data['data']['val']*10000,
+                    val_close=data['data']['val']*10000,
                     turnover=data['data']['balance'],
                 )
             else:
@@ -377,8 +377,8 @@ def register_stock_value_data_alt(code):
                     val_close=data['data']['val_close'],
                     turnover=data['data']['turnover'],
                 )
-                list_added.append(s.date.__str__())
-                logger.info('StockValueData of {} are updated'.format(stock))
+            list_added.append(s.date.__str__())
+            logger.info('StockValueData of {} are updated'.format(stock))
     result = {
         "counter": counter,
         "stock": {
