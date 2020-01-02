@@ -338,3 +338,42 @@ def import_trust_1(path, stock):
             logger.info("{}のsvdを{}件作成しました".format(stock.name, len(svds)))
     except Exception as e:
         print(e.args)
+
+
+def register_stock_value_data_alt(code):
+    '''
+    record_stock_value_data_alt
+    :desc: yahooファイナンスからHLOCTを取得し、StockValueDataに格納
+    :param code: 銘柄コード
+    :return: StockValueDataの追加数等
+    '''
+    # for result
+    counter = 0
+    list_added = list()
+    # main process
+    data = asset_scraping.yf_detail(code)
+    stock = Stock.objects.get(code=code)
+    if data['status']:
+        today = date.today()
+        if StockValueData.objects.filter(stock=stock, date=today).__len__() == 0:
+            counter += 1
+            s = StockValueData.objects.create(
+                stock=stock,
+                date=today,
+                val_open=data['data']['val_open'],
+                val_high=data['data']['val_high'],
+                val_low=data['data']['val_low'],
+                val_close=data['data']['val_close'],
+                turnover=data['data']['turnover'],
+            )
+            list_added.append(s.date.__str__())
+            logger.info('StockValueData of {} are updated'.format(stock))
+    result = {
+        "counter": counter,
+        "stock": {
+            "name": stock.name,
+            "code": stock.code,
+        },
+        "list": list_added,
+    }
+    return result

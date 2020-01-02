@@ -136,8 +136,7 @@ def yf_detail(code):
             soup = BeautifulSoup(ret.content, "html5lib")
         else:
             soup = BeautifulSoup(ret.content, "lxml")
-        if len(str(code)) == 4:
-            res['is_trust'] = False
+        if not data['is_trust']:
             # 株
             stocktable = soup.find('table', {'class': 'stocksTable'})
             data['name'] = stocktable.findAll('th', {'class': 'symbol'})[0].text
@@ -151,6 +150,14 @@ def yf_detail(code):
                 dd.text.replace(",", "").replace("\n", "").replace("(連) ", "").replace("(単) ", "")
                 for dd in chartfinance.findAll('strong')
             ]
+            # hloct
+            detail = soup.find('div', {"class": "innerDate"})
+            strongs = detail.findAll('strong')
+            data['val_close'] = data['val']
+            data['val_open'] = float(strongs[1].text.replace(',', ''))
+            data['val_high'] = float(strongs[2].text.replace(',', ''))
+            data['val_low'] = float(strongs[3].text.replace(',', ''))
+            data['turnover'] = float(strongs[4].text.replace(',', ''))
             # タイトルの取得
             dts = chartfinance.findAll('dt')
             keys = list()
@@ -172,7 +179,6 @@ def yf_detail(code):
             res['msg'] = "Success"
             res['status'] = True
         else:
-            data['is_trust'] = True
             # 投資信託
             data['val'] = float(soup.find('span', {'class': "_3BGK5SVf"}).text.replace(",", ""))/10000
             data['name'] = soup.find('span', {'class': "cj4y2d7f"}).text
