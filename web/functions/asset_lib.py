@@ -357,17 +357,28 @@ def register_stock_value_data_alt(code):
         today = date.today()
         if StockValueData.objects.filter(stock=stock, date=today).__len__() == 0:
             counter += 1
-            s = StockValueData.objects.create(
-                stock=stock,
-                date=today,
-                val_open=data['data']['val_open'],
-                val_high=data['data']['val_high'],
-                val_low=data['data']['val_low'],
-                val_close=data['data']['val_close'],
-                turnover=data['data']['turnover'],
-            )
-            list_added.append(s.date.__str__())
-            logger.info('StockValueData of {} are updated'.format(stock))
+            if stock.is_trust:
+                s = StockValueData.objects.create(
+                    stock=stock,
+                    date=today,
+                    val_open=data['data']['val'],
+                    val_high=data['data']['val'],
+                    val_low=data['data']['val'],
+                    val_close=data['data']['val'],
+                    turnover=data['data']['balance'],
+                )
+            else:
+                s = StockValueData.objects.create(
+                    stock=stock,
+                    date=today,
+                    val_open=data['data']['val_open'],
+                    val_high=data['data']['val_high'],
+                    val_low=data['data']['val_low'],
+                    val_close=data['data']['val_close'],
+                    turnover=data['data']['turnover'],
+                )
+                list_added.append(s.date.__str__())
+                logger.info('StockValueData of {} are updated'.format(stock))
     result = {
         "counter": counter,
         "stock": {

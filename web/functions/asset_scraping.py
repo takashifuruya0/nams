@@ -130,7 +130,10 @@ def yf_detail(code):
     }
     data['code'] = code
     data['is_trust'] = False if len(str(code)) == 4 else True
-    ret = requests.get(base_url, params={"code": str(code), })
+    headers = {
+        "user-agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_14_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.88 Safari/537.36"
+    }
+    ret = requests.get(base_url, params={"code": str(code), }, headers=headers)
     try:
         if settings.ENVIRONMENT == "develop":
             soup = BeautifulSoup(ret.content, "html5lib")
@@ -180,9 +183,29 @@ def yf_detail(code):
             res['status'] = True
         else:
             # 投資信託
-            data['val'] = float(soup.find('span', {'class': "_3BGK5SVf"}).text.replace(",", ""))/10000
+            # data['val'] = float(soup.find('span', {'class': "_3BGK5SVf"}).text.replace(",", ""))/10000
+            # data['balance'] = float(d.find('span', {"class": "_3BGK5SVf"}).text.replace(',', ''))*1000000
             data['name'] = soup.find('span', {'class': "cj4y2d7f"}).text
             data['industry'] = "投資信託"
+            d = soup.find('span', {"class": "_284RTWj9"})
+            # spans
+            spans = soup.findAll('span', {'class': "_3BGK5SVf"})
+            data['val'] = float(spans[0].text.replace(',', ''))/10000
+            data['diff'] = float(spans[1].text.replace(',', ''))
+            data['diff_pct'] = float(spans[2].text.replace(',', ''))
+            data['balance'] = float(spans[3].text.replace(',', ''))*1000000
+            data['資金流出入'] = float(spans[4].text.replace(',', '')) * 1000000
+            data['トータルリターン (%)'] = float(spans[5].text.replace(',', ''))
+            data['信託報酬 (%)'] = float(spans[6].text.replace(',', ''))
+            data['リスク'] = float(spans[7].text.replace(',', ''))
+            # table
+            # table = soup.find('table', {"class": "_2NDVpt4L"})
+            # tds = table.findAll('td')
+            # data['カテゴリ-'] = None
+            # data['運用会社'] = None
+            # data['運用方針'] = None
+            # data['設定日'] = None
+            # data['償還日'] = None
             res['data'] = data
             # 完了
             res['msg'] = "Success"

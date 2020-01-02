@@ -14,7 +14,7 @@ class Command(BaseCommand):
     # コマンドライン引数を指定します。(argparseモジュール https://docs.python.org/2.7/library/argparse.html)
     # コマンドが実行された際に呼ばれるメソッド
     def handle(self, *args, **options):
-        stocks = Stock.objects.filter(is_trust=False)
+        stocks = Stock.objects.all()
         today = date.today()
         for s in stocks:
             if not StockValueData.objects.filter(stock=s, date=today).exists():
