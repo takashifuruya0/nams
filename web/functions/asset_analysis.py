@@ -33,6 +33,15 @@ def prepare(svds):
     df["sigma_25"] = df.val_close.rolling(window=25).std()
     df["ma_25p2sigma"] = df.ma_25 + 2 * df.sigma_25
     df["ma_25m2sigma"] = df.ma_25 - 2 * df.sigma_25
+    # trend
+    df['is_upper_5'] = False
+    df['is_upper_5'] = df['is_upper_5'].where(df['ma_5'].diff() < 0, True)
+    df['is_upper_75'] = False
+    df['is_upper_75'] = df['is_upper_75'].where(df['ma_75'].diff() < 0, True)
+    df['is_upper_25'] = False
+    df['is_upper_25'] = df['is_upper_25'].where(df['ma_25'].diff() < 0, True)
+    df['is_upper_75'] = False
+    df['is_upper_75'] = df['is_upper_75'].where(df['ma_75'].diff() < 0, True)
     # return
     return df
 
@@ -263,3 +272,10 @@ def check(df):
                 "df": df_reverse.iloc[i],
             })
     return data
+
+
+def test():
+    from web.models import StockValueData
+    svds = StockValueData.objects.filter(stock__code=6460).order_by('date')
+    df = prepare(svds)
+    return df
