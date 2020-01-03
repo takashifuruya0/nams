@@ -99,6 +99,28 @@
 		</div>
 		<div class="col-12 col-sm-5">
 			<h4>Order Overview</h4>
+			{%if df_trend.is_upper_25%}
+			<span class="badge badge-success">
+				25日トレンド <i class="fas fa-level-up-alt"></i>
+				<span class="badge badge-light">{{df_trend.period_25}}日継続中</span>
+			</span>
+			{%else%}
+			<span class="badge badge-danger">
+				25日トレンド <i class="fas fa-level-down-alt"></i>
+				<span class="badge badge-light">{{df_trend.period_25}}日継続中</span>
+			</span>
+			{%endif%}
+			{%if df_trend.is_upper_75%}
+			<span class="badge badge-success">
+				75日トレンド <i class="fas fa-level-up-alt"></i>
+				<span class="badge badge-light">{{df_trend.period_75}}日継続中</span>
+			</span>
+			{%else%}
+			<span class="badge badge-danger">
+				75日トレンド <i class="fas fa-level-down-alt"></i>
+				<span class="badge badge-light">{{df_trend.period_75}}日継続中</span>
+			</span>
+			{%endif%}
 			<table class="table">
 				<tr>
 					<th>買付口数</th>
@@ -181,6 +203,31 @@
 				</button>
 				{% csrf_token %}
 			</form>
+
+			<hr>
+			<h5>Analysis</h5>
+			<table class="table">
+				<tr>
+					<th>種類</th>
+					<th>日付</th>
+					<th>終値</th>
+					<th>下ひげ</th>
+					<th>上ひげ</th>
+					<th>陽線/陰線</th>
+				</tr>
+				{% for kk, vv in df_check.items %}
+				{% for v in vv %}
+				<tr>
+					<td>{{kk}}</td>
+					<td>{{v.date}}</td>
+					<td>{{v.val_close}}</td>
+					<td>{{v.lower_mustache}}</td>
+					<td>{{v.upper_mustache}}</td>
+					<td>{{v.val_close_open}}</td>
+				</tr>
+				{% endfor %}
+				{% endfor %}
+			</table>
 		</div>
 	</div>
 </div>

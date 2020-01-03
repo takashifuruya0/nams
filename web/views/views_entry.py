@@ -9,7 +9,7 @@ from web.forms import EntryForm
 from django.contrib import messages
 from django.db import transaction
 from web.models import Entry, Order, StockValueData
-from web.functions import asset_scraping
+from web.functions import asset_scraping, asset_analysis
 # list view, pagination
 from django.views.generic import ListView
 from pure_pagination.mixins import PaginationMixin
@@ -109,6 +109,9 @@ def entry_detail(request, entry_id):
             od = edo - relativedelta(days=days)
             cd = edc + relativedelta(days=days) if entry.is_closed else date.today()
             svds = StockValueData.objects.filter(stock=entry.stock, date__gt=od, date__lt=cd).order_by('date')
+            df = asset_analysis.prepare(svds)
+            df_check = asset_analysis.check(df)
+            df_trend = asset_analysis.get_trend(df)
             # グラフ化範囲のデータ数
             svds_count = svds.count()
             # 日付とindex番号の紐付け
@@ -131,7 +134,7 @@ def entry_detail(request, entry_id):
             if not settings.ENVIRONMENT == "production":
                 messages.add_message(request, messages.ERROR, e.args)
                 messages.add_message(request, messages.ERROR, type(e))
-                messages.info(list(date_list[order_date].keys()))
+                # messages.info(list(date_list[order_date].keys()))
             return redirect('web:main')
         output = {
             "msg": msg,
@@ -144,6 +147,9 @@ def entry_detail(request, entry_id):
             "sos_detail": sos_detail,
             "od": od,
             "cd": cd,
+            "df": df,
+            "df_check": df_check,
+            "df_trend": df_trend,
         }
         # openの場合、現在情報を取得
         if not entry.is_closed:
