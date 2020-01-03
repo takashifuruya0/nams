@@ -210,22 +210,20 @@
 				<tr>
 					<th>種類</th>
 					<th>日付</th>
-					<th>終値</th>
-					<th>下ひげ</th>
 					<th>上ひげ</th>
+					<th>下ひげ</th>
 					<th>陽線/陰線</th>
 				</tr>
-				{% for kk, vv in df_check.items %}
-				{% for v in vv %}
+				{% for d in df_check %}
 				<tr>
-					<td>{{kk}}</td>
-					<td>{{v.date}}</td>
-					<td>{{v.val_close}}</td>
-					<td>{{v.lower_mustache}}</td>
-					<td>{{v.upper_mustache}}</td>
-					<td>{{v.val_close_open}}</td>
+					<td>
+						<label class="badge badge-{%if d.is_bottom%}success{%else%}danger{%endif%}">{{d.type}}</label>
+					</td>
+					<td>{{d.df.date}}</td>
+					<td>{{d.df.upper_mustache}}</td>
+					<td>{{d.df.lower_mustache}}</td>
+					<td>{{d.df.val_line}}</td>
 				</tr>
-				{% endfor %}
 				{% endfor %}
 			</table>
 		</div>
