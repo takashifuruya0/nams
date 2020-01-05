@@ -115,7 +115,11 @@ class Entry(models.Model):
         return round(100 + self.profit() * 100 / self.val_buy() / self.num_buy(), 1)
 
     def date_open(self):
-        return min([o.datetime for o in self.order_set.filter(is_buy=True)])
+        os = self.order_set.filter(is_buy=True)
+        if os.exists():
+            return min([o.datetime for o in os])
+        else:
+            return
 
     def date_close(self):
         os = self.order_set.filter(is_buy=False)
